@@ -1,28 +1,24 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
+from DB import DB
 
 app = Flask(__name__)
+api = Api(app)
 
 
-@app.route('/')
-def hi():
-    return "Hello World"
+ class InteractionCheck(Resource):
+    def get(self):
+        drugs_sent = request.args
+        for key,value in drugs_sent.items():
+            print(key)
+        # data = request.get_json(force=True)
+        # data_base = DB()
+        # data_base.creat_table()
+        # data_base.close_connection()
+        return drugs_sent
 
 
-@app.route('/interaction-checker/check')
-def check_interaction():
-    return "checking interactions between drugs"
-
-
-@app.route('/side-effect-report/send-report')
-def send_report():
-    return "sending report"
-
-
-@app.route('/drug-search/search')
-def search_drug():
-    return "sending report"
-
+api.add_resource(InteractionCheck, '/check')
 
 if __name__ == '__main__':
     app.run(debug=True)
