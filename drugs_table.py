@@ -1,12 +1,10 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-
 '''
 In the current script I build the drug table from an Excel file
 I received from the Ministry of Health
 '''
-
 
 def main():
     relevant_cols = ['remedy_number', 'english_name', 'hebrew_name', 'ingredients', 'details', 'dosage_form',

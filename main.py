@@ -6,10 +6,10 @@ app = Flask(__name__)
 api = Api(app)
 
 
- class InteractionCheck(Resource):
+class InteractionCheck(Resource):
     def get(self):
         drugs_sent = request.args
-        for key,value in drugs_sent.items():
+        for key, value in drugs_sent.items():
             print(key)
         # data = request.get_json(force=True)
         # data_base = DB()
