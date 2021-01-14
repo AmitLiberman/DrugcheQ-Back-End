@@ -2,3 +2,6 @@ Flask
 uwsgi
 flask_restful
 psycopg2
+sqlalchemy
+pandas
+requests
