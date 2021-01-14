@@ -55,6 +55,6 @@ def find_interaction(drug_list):
     return interaction_dict
 
 
-if __name__ == '__main__':
-    list = ['rizatriptan', 'moclobemide', 'Humira']
-    find_interaction(list)
+# if __name__ == '__main__':
+#     list = ['rizatriptan', 'moclobemide', 'Humira']
+#     find_interaction(list)
