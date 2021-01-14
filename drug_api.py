@@ -18,21 +18,8 @@ def find_serials(drug_list):
     return drugs_serial_number
 
 
-# find the interaction between given drugs
-def find_interaction(drug_list):
-    drugs_serial_number = find_serials(drug_list)
-
-    serials = "+".join(drugs_serial_number)
-
-    # get request for the interaction api.
-    # the '&sources=ONCHigh' gives as the interaction with the high severity
-    if len(drug_list) == 1:
-        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=' + serials)
-    else:
-        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials)
-
-    response_as_dict = json.loads(res.text)
-
+ # parse the response JSON file from the API and build dictionary with relevant data
+def build_interaction_dict(response_as_dict):
     full_interaction_type = response_as_dict['fullInteractionTypeGroup'][0]['fullInteractionType']
     interaction_dict = {}
     for i in range(len(full_interaction_type)):
@@ -40,6 +27,30 @@ def find_interaction(drug_list):
         interaction_dict[i]['drug1'] = full_interaction_type[i]['minConcept'][0]['name']
         interaction_dict[i]['drug2'] = full_interaction_type[i]['minConcept'][1]['name']
         interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
+        severity_interaction_type = response_as_dict['fullInteractionTypeGroup'][1]['fullInteractionType']
+        for j in range(len(severity_interaction_type)):
+            if interaction_dict[i]['drug1'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
+                'drug2'] in severity_interaction_type[j]['comment']:
+                interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
+    return interaction_dict
+
+
+# find the interaction between given drugs
+def find_interaction(drug_list):
+    drugs_serial_number = find_serials(drug_list)
+
+    serials = "+".join(drugs_serial_number)
+
+    # get request for the interaction api.
+    if len(drug_list) == 1:
+        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=' + serials)
+    else:
+        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials)
+
+    response_as_dict = json.loads(res.text)
+
+    interaction_dict = build_interaction_dict(response_as_dict)
+
     print(interaction_dict)
 
 
