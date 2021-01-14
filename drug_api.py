@@ -18,7 +18,7 @@ def find_serials(drug_list):
     return drugs_serial_number
 
 
- # parse the response JSON file from the API and build dictionary with relevant data
+# parse the response JSON file from the API and build dictionary with relevant data
 def build_interaction_dict(response_as_dict):
     full_interaction_type = response_as_dict['fullInteractionTypeGroup'][0]['fullInteractionType']
     interaction_dict = {}
@@ -29,8 +29,9 @@ def build_interaction_dict(response_as_dict):
         interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
         severity_interaction_type = response_as_dict['fullInteractionTypeGroup'][1]['fullInteractionType']
         for j in range(len(severity_interaction_type)):
-            if interaction_dict[i]['drug1'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
-                'drug2'] in severity_interaction_type[j]['comment']:
+
+            if interaction_dict[i]['drug1'] in severity_interaction_type[j]['comment'] and interaction_dict[i]['drug2'] \
+                    in severity_interaction_type[j]['comment']:
                 interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
     return interaction_dict
 
@@ -51,7 +52,7 @@ def find_interaction(drug_list):
 
     interaction_dict = build_interaction_dict(response_as_dict)
 
-    print(interaction_dict)
+    return interaction_dict
 
 
 if __name__ == '__main__':
