@@ -18,7 +18,7 @@ def find_serials(drug_list):
     return drugs_serial_number
 
 
-#find the interaction between given drugs
+# find the interaction between given drugs
 def find_interaction(drug_list):
     drugs_serial_number = find_serials(drug_list)
 
@@ -28,32 +28,21 @@ def find_interaction(drug_list):
     # the '&sources=ONCHigh' gives as the interaction with the high severity
     if len(drug_list) == 1:
         res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=' + serials)
-        res2 = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=' + serials + '&sources=ONCHigh')
     else:
         res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials)
-        res2 = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials + '&sources=ONCHigh')
 
     response_as_dict = json.loads(res.text)
-    response2_as_dict = json.loads(res2.text)
 
-    print(response_as_dict)
-    print(response2_as_dict)
-
-
-    # length = len(response_as_dict['interactionTypeGroup'][0]['interactionType'][0]['interactionPair'])
-    # for i in range(length):
-    #     print(response_as_dict['interactionTypeGroup'][0]['interactionType'][0]['interactionPair'][i]['severity'])
-    # response_as_dict['interactionTypeGroup'][0]['interactionType'][0]['interactionPair'][0]['interactionConcept']['severity']
-    # # professional name of aspirin
-    # print(response_as_dict['interactionTypeGroup'][0]['interactionType'][0]['interactionPair'][0]['interactionConcept'][0][
-    #           'sourceConceptItem']['name'])
-    # # professional name of interaction drug
-    # print(response_as_dict['interactionTypeGroup'][0]['interactionType'][0]['interactionPair'][0]['interactionConcept'][1][
-    #           'sourceConceptItem']['name'])
-    # # description
-    # print(response_as_dict['interactionTypeGroup'][0]['interactionType'][0]['interactionPair'][0]['description'])
+    full_interaction_type = response_as_dict['fullInteractionTypeGroup'][0]['fullInteractionType']
+    interaction_dict = {}
+    for i in range(len(full_interaction_type)):
+        interaction_dict[i] = {}
+        interaction_dict[i]['drug1'] = full_interaction_type[i]['minConcept'][0]['name']
+        interaction_dict[i]['drug2'] = full_interaction_type[i]['minConcept'][1]['name']
+        interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
+    print(interaction_dict)
 
 
 if __name__ == '__main__':
-    list = ['rizatriptan','moclobemide']
+    list = ['rizatriptan', 'moclobemide', 'Humira']
     find_interaction(list)

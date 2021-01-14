@@ -14,6 +14,7 @@ class InteractionCheck(Resource):
         # data = request.get_json(force=True)
         # data_base = DB()
         # data_base.creat_table()
+
         # data_base.close_connection()
         return drugs_sent
 
