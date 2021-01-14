@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
-from DB import DB
+# from DB import DB
 import drug_api
 
 app = Flask(__name__)
