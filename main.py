@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from flask_restful import Api, Resource
-# from DB import DB
+ # from DB import DB
 import drug_api
 
 app = Flask(__name__)
+cors = CORS(app)
 api = Api(app)
 
 
@@ -19,7 +21,7 @@ class InteractionCheck(Resource):
         # data_base = DB()
         # data_base.creat_table()
         # data_base.close_connection()
-        return interaction_dict
+        return jsonify(interaction_dict)
 
 
 api.add_resource(InteractionCheck, '/check')

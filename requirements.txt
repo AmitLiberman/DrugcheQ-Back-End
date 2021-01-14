@@ -1,6 +1,7 @@
 Flask
 uwsgi
 flask_restful
+flask_cors
 psycopg2
 sqlalchemy
 pandas
