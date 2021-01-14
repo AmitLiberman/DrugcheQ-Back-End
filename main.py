@@ -6,10 +6,10 @@ import drug_api
 app = Flask(__name__)
 api = Api(app)
 
+
 class welcome(Resource):
     def get(self):
         return 'welcome!'
-
 
 class InteractionCheck(Resource):
     def get(self):
