@@ -14,6 +14,7 @@ def find_serials(drug_list):
     for drug in drug_list:
         x = requests.get('https://rxnav.nlm.nih.gov/REST/rxcui.json?name=' + drug)
         response_as_dict = json.loads(x.text)
+        print(x.text)
         drugs_serial_number.append(response_as_dict['idGroup']['rxnormId'][0])
     print(drugs_serial_number)
     return drugs_serial_number
@@ -26,15 +27,22 @@ def build_interaction_dict(response_as_dict):
     interaction_dict = {}
     for i in range(len(full_interaction_type)):
         interaction_dict[i] = {}
-        interaction_dict[i]['drug1'] = full_interaction_type[i]['minConcept'][0]['name']
-        interaction_dict[i]['drug2'] = full_interaction_type[i]['minConcept'][1]['name']
+        interaction_dict[i]['drug1_name'] = full_interaction_type[i]['minConcept'][0]['name']
+        interaction_dict[i]['drug1_generic_name'] = \
+        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][0]['sourceConceptItem']['name']
+        interaction_dict[i]['drug2_name'] = full_interaction_type[i]['minConcept'][1]['name']
+        interaction_dict[i]['drug2_generic_name'] = \
+        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][1]['sourceConceptItem']['name']
         interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
+        interaction_dict[i]['comment'] = full_interaction_type[i]['comment']
         if len(response_as_dict['fullInteractionTypeGroup']) > 1:
             severity_interaction_type = response_as_dict['fullInteractionTypeGroup'][1]['fullInteractionType']
             for j in range(len(severity_interaction_type)):
-                if interaction_dict[i]['drug1'] in severity_interaction_type[j]['comment'] and interaction_dict[i]['drug2'] \
+                if interaction_dict[i]['drug1'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
+                    'drug2'] \
                         in severity_interaction_type[j]['comment']:
                     interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
+    print(interaction_dict)
     return interaction_dict
 
 
@@ -55,7 +63,6 @@ def find_interaction(drug_list):
     interaction_dict = build_interaction_dict(response_as_dict)
 
     return interaction_dict
-
 
 # if __name__ == '__main__':
 #     list = ['rizatriptan', 'moclobemide', 'Humira']
