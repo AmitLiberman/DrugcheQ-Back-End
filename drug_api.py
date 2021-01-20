@@ -55,7 +55,7 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
     except:
         print('There is no interaction between the drugs')
         interaction_dict[0] = {}
-        interaction_dict[0]['comment'] = 'Drugs are safe'
+        interaction_dict[0]['comment'] = 'safe'
         return interaction_dict
 
     for i in range(len(full_interaction_type)):
@@ -86,7 +86,7 @@ def find_interaction(drug_list):
             drug_exist.append(drug)
         except:
             interaction_dict[i] = {}
-            interaction_dict[i]['comment'] = 'Can not find drug: ' + drug['name']
+            interaction_dict[i]['error'] = drug['name']
 
     if len(serial_numbers) <= 1:
         print(interaction_dict)
@@ -108,5 +108,5 @@ def find_interaction(drug_list):
 
 # if __name__ == '__main__':
 #     # list = ['rizatriptan', 'moclobemidei', 'Humira', 'paracetamol','coumadin']
-#     list = ['Fexofenadinel', 'Humira']
+#     list = ['Fexofenadine', 'Humira']
 #     find_interaction(list)
