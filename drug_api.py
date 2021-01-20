@@ -14,7 +14,6 @@ def find_serials(drug_list):
     for drug in drug_list:
         x = requests.get('https://rxnav.nlm.nih.gov/REST/rxcui.json?name=' + drug)
         response_as_dict = json.loads(x.text)
-        print(x.text)
         try:
             drugs_serial_number.append(response_as_dict['idGroup'])
         except:  # can't find specific drug
@@ -49,7 +48,6 @@ def insert_severity(response_as_dict, interaction_dict, i):
 
 # parse the response JSON file from the API and build dictionary with relevant data
 def build_interaction_dict(response_as_dict, drugs_serial_number):
-    print(response_as_dict)
     interaction_dict = {}
 
     try:
@@ -57,7 +55,7 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
     except:
         print('There is no interaction between the drugs')
         interaction_dict[0] = {}
-        interaction_dict[0]['comment'] ='Drugs are safe'
+        interaction_dict[0]['comment'] = 'Drugs are safe'
         return interaction_dict
 
     for i in range(len(full_interaction_type)):
@@ -72,27 +70,27 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
         if len(response_as_dict['fullInteractionTypeGroup']) > 1:
             insert_severity(response_as_dict, interaction_dict, i)
 
-    print(interaction_dict)
     return interaction_dict
 
 
 # find the interaction between given drugs
 def find_interaction(drug_list):
     drugs_serial_number = find_serials(drug_list)
+    interaction_dict = {}
+
     drug_exist = []
     serial_numbers = []
-    for drug in drugs_serial_number:
+    for i, drug in enumerate(drugs_serial_number):
         try:
             serial_numbers.append(drug['rxnormId'][0])
             drug_exist.append(drug)
         except:
-            print('Can not find drug: ' + drug['name'])
+            interaction_dict[i] = {}
+            interaction_dict[i]['comment'] = 'Can not find drug: ' + drug['name']
 
-    interaction_dict = {}
-    if len(serial_numbers) <=1:
-        interaction_dict[0] = {}
-        interaction_dict[0]['comment'] ='Drugs are safe'
-
+    if len(serial_numbers) <= 1:
+        print(interaction_dict)
+        return interaction_dict
 
     serials = "+".join(serial_numbers)
 
@@ -103,14 +101,12 @@ def find_interaction(drug_list):
         res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials)
 
     response_as_dict = json.loads(res.text)
-    # print(response_as_dict)
-    # exit(1)
     interaction_dict = build_interaction_dict(response_as_dict, drug_exist)
     print(interaction_dict)
     return interaction_dict
 
 
-if __name__ == '__main__':
-    # list = ['rizatriptan', 'moclobemidei', 'Humira', 'paracetamol','coumadin']
-    list = ['Fexofenadinel', 'Humiral']
-    find_interaction(list)
+# if __name__ == '__main__':
+#     # list = ['rizatriptan', 'moclobemidei', 'Humira', 'paracetamol','coumadin']
+#     list = ['Fexofenadinel', 'Humira']
+#     find_interaction(list)
