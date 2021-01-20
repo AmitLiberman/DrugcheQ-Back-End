@@ -9,9 +9,6 @@ cors = CORS(app)
 api = Api(app)
 
 
-class welcome(Resource):
-    def get(self):
-        return 'welcome!'
 
 class InteractionCheck(Resource):
     def get(self):
@@ -25,7 +22,6 @@ class InteractionCheck(Resource):
 
 
 api.add_resource(InteractionCheck, '/check')
-api.add_resource(welcome, '/')
 
 
 if __name__ == '__main__':

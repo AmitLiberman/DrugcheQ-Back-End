@@ -15,31 +15,46 @@ def find_serials(drug_list):
         x = requests.get('https://rxnav.nlm.nih.gov/REST/rxcui.json?name=' + drug)
         response_as_dict = json.loads(x.text)
         print(x.text)
-        drugs_serial_number.append(response_as_dict['idGroup']['rxnormId'][0])
-    print(drugs_serial_number)
+        try:
+            drugs_serial_number.append(response_as_dict['idGroup'])
+        except:  # can't find specific drug
+            pass
     return drugs_serial_number
 
 
+# Insert drug names (user insert and generic) to response dictionary
+def insert_drug_name(full_interaction_type,drugs_serial_number,interaction_dict,i,drug_num):
+    rxcui = full_interaction_type[i]['minConcept'][drug_num-1]['rxcui']
+    for drug in drugs_serial_number:
+        if drug['rxnormId'][0] == rxcui:
+            if drug['name'].lower() != full_interaction_type[i]['minConcept'][drug_num-1]['name'].lower():
+                interaction_dict[i]['drug'+str(drug_num)+'_name'] = drug['name']
+            else:
+                interaction_dict[i]['drug'+str(drug_num)+'_name'] = full_interaction_type[i]['minConcept'][drug_num-1]['name']
+
+    interaction_dict[i]['drug'+str(drug_num)+'_generic_name'] = \
+        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num-1]['sourceConceptItem']['name']
+
 # parse the response JSON file from the API and build dictionary with relevant data
-def build_interaction_dict(response_as_dict):
+def build_interaction_dict(response_as_dict, drugs_serial_number):
     print(response_as_dict)
     full_interaction_type = response_as_dict['fullInteractionTypeGroup'][0]['fullInteractionType']
     interaction_dict = {}
     for i in range(len(full_interaction_type)):
         interaction_dict[i] = {}
-        interaction_dict[i]['drug1_name'] = full_interaction_type[i]['minConcept'][0]['name']
-        interaction_dict[i]['drug1_generic_name'] = \
-        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][0]['sourceConceptItem']['name']
-        interaction_dict[i]['drug2_name'] = full_interaction_type[i]['minConcept'][1]['name']
-        interaction_dict[i]['drug2_generic_name'] = \
-        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][1]['sourceConceptItem']['name']
+
+        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 1) #drug1
+        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 2) #drug2
+
+
         interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
         interaction_dict[i]['comment'] = full_interaction_type[i]['comment']
+
         if len(response_as_dict['fullInteractionTypeGroup']) > 1:
             severity_interaction_type = response_as_dict['fullInteractionTypeGroup'][1]['fullInteractionType']
             for j in range(len(severity_interaction_type)):
-                if interaction_dict[i]['drug1'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
-                    'drug2'] \
+                if interaction_dict[i]['drug1_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
+                    'drug2_name'] \
                         in severity_interaction_type[j]['comment']:
                     interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
     print(interaction_dict)
@@ -49,8 +64,12 @@ def build_interaction_dict(response_as_dict):
 # find the interaction between given drugs
 def find_interaction(drug_list):
     drugs_serial_number = find_serials(drug_list)
+    serial_numbers = []
+    for drug in drugs_serial_number:
+        serial_numbers.append(drug['rxnormId'][0])
+    print(serial_numbers)
 
-    serials = "+".join(drugs_serial_number)
+    serials = "+".join(serial_numbers)
 
     # get request for the interaction api.
     if len(drug_list) == 1:
@@ -60,10 +79,12 @@ def find_interaction(drug_list):
 
     response_as_dict = json.loads(res.text)
 
-    interaction_dict = build_interaction_dict(response_as_dict)
+    interaction_dict = build_interaction_dict(response_as_dict, drugs_serial_number)
 
     return interaction_dict
 
-# if __name__ == '__main__':
-#     list = ['rizatriptan', 'moclobemide', 'Humira']
-#     find_interaction(list)
+
+if __name__ == '__main__':
+    list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol']
+    # list = ['Humira', 'paracetamol']
+    find_interaction(list)
