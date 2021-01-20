@@ -23,17 +23,27 @@ def find_serials(drug_list):
 
 
 # Insert drug names (user insert and generic) to response dictionary
-def insert_drug_name(full_interaction_type,drugs_serial_number,interaction_dict,i,drug_num):
-    rxcui = full_interaction_type[i]['minConcept'][drug_num-1]['rxcui']
+def insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, drug_num):
+    rxcui = full_interaction_type[i]['minConcept'][drug_num - 1]['rxcui']
     for drug in drugs_serial_number:
         if drug['rxnormId'][0] == rxcui:
-            if drug['name'].lower() != full_interaction_type[i]['minConcept'][drug_num-1]['name'].lower():
-                interaction_dict[i]['drug'+str(drug_num)+'_name'] = drug['name']
+            if drug['name'].lower() != full_interaction_type[i]['minConcept'][drug_num - 1]['name'].lower():
+                interaction_dict[i]['drug' + str(drug_num) + '_name'] = drug['name']
             else:
-                interaction_dict[i]['drug'+str(drug_num)+'_name'] = full_interaction_type[i]['minConcept'][drug_num-1]['name']
+                interaction_dict[i]['drug' + str(drug_num) + '_name'] = \
+                full_interaction_type[i]['minConcept'][drug_num - 1]['name']
 
-    interaction_dict[i]['drug'+str(drug_num)+'_generic_name'] = \
-        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num-1]['sourceConceptItem']['name']
+    interaction_dict[i]['drug' + str(drug_num) + '_generic_name'] = \
+        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1]['sourceConceptItem']['name']
+
+def insert_severity(response_as_dict,interaction_dict,i):
+    severity_interaction_type = response_as_dict['fullInteractionTypeGroup'][1]['fullInteractionType']
+    for j in range(len(severity_interaction_type)):
+        if interaction_dict[i]['drug1_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
+            'drug2_name'] \
+                in severity_interaction_type[j]['comment']:
+            interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
+
 
 # parse the response JSON file from the API and build dictionary with relevant data
 def build_interaction_dict(response_as_dict, drugs_serial_number):
@@ -43,20 +53,15 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
     for i in range(len(full_interaction_type)):
         interaction_dict[i] = {}
 
-        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 1) #drug1
-        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 2) #drug2
-
+        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 1)  # drug1
+        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 2)  # drug2
 
         interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
         interaction_dict[i]['comment'] = full_interaction_type[i]['comment']
 
         if len(response_as_dict['fullInteractionTypeGroup']) > 1:
-            severity_interaction_type = response_as_dict['fullInteractionTypeGroup'][1]['fullInteractionType']
-            for j in range(len(severity_interaction_type)):
-                if interaction_dict[i]['drug1_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
-                    'drug2_name'] \
-                        in severity_interaction_type[j]['comment']:
-                    interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
+            insert_severity(response_as_dict, interaction_dict, i)
+
     print(interaction_dict)
     return interaction_dict
 
