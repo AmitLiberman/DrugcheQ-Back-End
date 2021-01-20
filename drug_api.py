@@ -42,13 +42,18 @@ def insert_severity(response_as_dict, interaction_dict, i):
     for j in range(len(severity_interaction_type)):
         if interaction_dict[i]['drug1_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
             'drug2_name'] \
-                in severity_interaction_type[j]['comment']:
+                in severity_interaction_type[j]['comment'] or interaction_dict[i]['drug1_generic_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
+            'drug2_generic_name'] \
+                in severity_interaction_type[j]['comment'] :
             interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
+
 
 
 # parse the response JSON file from the API and build dictionary with relevant data
 def build_interaction_dict(response_as_dict, drugs_serial_number):
     interaction_dict = {}
+
+    print(response_as_dict)
 
     try:
         full_interaction_type = response_as_dict['fullInteractionTypeGroup'][0]['fullInteractionType']
@@ -97,8 +102,9 @@ def find_interaction(drug_list):
     # get request for the interaction api.
     if len(drug_list) == 1:
         res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=' + serials)
+
     else:
-        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials)
+        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials )
 
     response_as_dict = json.loads(res.text)
     interaction_dict = build_interaction_dict(response_as_dict, drug_exist)
@@ -107,6 +113,6 @@ def find_interaction(drug_list):
 
 
 # if __name__ == '__main__':
-#     # list = ['rizatriptan', 'moclobemidei', 'Humira', 'paracetamol','coumadin']
+#     # list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol','coumadin','Morphine','Acepromazine']
 #     list = ['Fexofenadine', 'Humira']
 #     find_interaction(list)
