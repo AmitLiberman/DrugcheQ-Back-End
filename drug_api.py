@@ -24,8 +24,9 @@ def find_serials(drug_list):
 
 
 # Insert drug names (user insert and generic) to response dictionary
-def insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, drug_num):
+def insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, english_hebrew_names, i, drug_num):
     rxcui = full_interaction_type[i]['minConcept'][drug_num - 1]['rxcui']
+    print(drugs_serial_number)
     for drug in drugs_serial_number:
         if drug['rxnormId'][0] == rxcui:
             if drug['name'].lower() != full_interaction_type[i]['minConcept'][drug_num - 1]['name'].lower():
@@ -33,6 +34,8 @@ def insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dic
             else:
                 interaction_dict[i]['drug' + str(drug_num) + '_name'] = \
                     full_interaction_type[i]['minConcept'][drug_num - 1]['name']
+
+            interaction_dict[i]['drug' + str(drug_num) + '_hebrew_name'] = english_hebrew_names[drug['name'].upper()]
 
     interaction_dict[i]['drug' + str(drug_num) + '_generic_name'] = \
         full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1]['sourceConceptItem']['name']
@@ -52,11 +55,12 @@ def insert_severity(response_as_dict, interaction_dict, i):
 
 
 # parse the response JSON file from the API and build dictionary with relevant data
-def build_interaction_dict(response_as_dict, drugs_serial_number):
+def build_interaction_dict(response_as_dict, drugs_serial_number, english_hebrew_names):
     interaction_dict = {}
 
     print(response_as_dict)
 
+    # try to find interaction between drug. if it fails - that's means there is bo interaction
     try:
         full_interaction_type = response_as_dict['fullInteractionTypeGroup'][0]['fullInteractionType']
     except:
@@ -65,11 +69,14 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
         interaction_dict[0]['comment'] = 'safe'
         return interaction_dict
 
+    # go over all the interactions and build the interaction_dict
     for i in range(len(full_interaction_type)):
         interaction_dict[i] = {}
 
-        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 1)  # drug1
-        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, i, 2)  # drug2
+        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, english_hebrew_names, i,
+                         1)  # drug1
+        insert_drug_name(full_interaction_type, drugs_serial_number, interaction_dict, english_hebrew_names, i,
+                         2)  # drug2
 
         interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
         interaction_dict[i]['comment'] = full_interaction_type[i]['comment']
@@ -80,36 +87,32 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
     return interaction_dict
 
 
+# find Hebrew/English names for given drugs
 def check_names_from_db(drug_list):
     data_base = DB()
-    # names= data_base.fetch_all_data(
-    #     "SELECT english_name,hebrew_name FROM drug_name")
-    names= data_base.fetch_all_data(
-        "SELECT english_name,hebrew_name FROM drug_name WHERE hebrew_name = %s ",'יומירה ')
-    for row in names:
-        print("english name = ", row[0], )
-        print("hebrew name ", row[1])
-
-    # names = []
-    #
-    # for drug in drug_list:
-    #     if detect(drug) == 'he':
-    #         names.append(data_base.fetch_all_data(
-    #             "SELECT english_name,hebrew_name FROM drug_name WHERE hebrew_name = '{}'".format(drug)))
-    # print(names)
+    drug_names = []
+    for drug in drug_list:
+        # if the drug name written in hebrew
+        if detect(drug) == 'he':
+            drug_names.append(data_base.fetch_all_data(
+                "SELECT english_name,hebrew_name FROM drug_name WHERE hebrew_name LIKE %s ", '%' + drug.upper() + '%'))
+        else:  # written in english
+            drug_names.append(data_base.fetch_all_data(
+                "SELECT english_name,hebrew_name FROM drug_name WHERE english_name LIKE %s ", '%' + drug.upper() + '%'))
 
     data_base.close_connection()
+    return drug_names
 
-            # find the interaction between given drugs
 
-
+# find the interaction between given drugs
 def find_interaction(drug_list):
     drug_names = check_names_from_db(drug_list)
-    exit(1)
-    # for drug in drug_list:
-    #     print(detect(drug))
+    english_hebrew_names = {}
+    # make dictionary when key=eng_name and value=heb_name
+    for drug in drug_names:
+        english_hebrew_names[drug[0][0].split()[0]] = drug[0][1].split()[0]
 
-    drugs_serial_number = find_serials(drug_list)
+    drugs_serial_number = find_serials(list(english_hebrew_names.keys()))
     interaction_dict = {}
 
     drug_exist = []
@@ -136,12 +139,13 @@ def find_interaction(drug_list):
         res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials)
 
     response_as_dict = json.loads(res.text)
-    interaction_dict = build_interaction_dict(response_as_dict, drug_exist)
-
+    interaction_dict = build_interaction_dict(response_as_dict, drug_exist, english_hebrew_names)
+    print(interaction_dict)
     return interaction_dict
 
 
 if __name__ == '__main__':
-    #     list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
-    list = ['Fexofenadine', 'יומירה']
-    find_interaction(list)
+    # list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
+    list1 = ['coumadin', 'paracetamol',"יומירה"]
+
+    find_interaction(list1)
