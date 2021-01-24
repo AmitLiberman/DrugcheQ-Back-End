@@ -99,7 +99,6 @@ def check_names_from_db(drug_list):
         else:  # written in english
             drug_names.append(data_base.fetch_all_data(
                 "SELECT english_name,hebrew_name FROM drug_name WHERE english_name LIKE %s ", '%' + drug.upper() + '%'))
-
     data_base.close_connection()
     return drug_names
 
@@ -108,9 +107,11 @@ def check_names_from_db(drug_list):
 def find_interaction(drug_list):
     drug_names = check_names_from_db(drug_list)
     english_hebrew_names = {}
+
     # make dictionary when key=eng_name and value=heb_name
     for drug in drug_names:
-        english_hebrew_names[drug[0][0].split()[0]] = drug[0][1].split()[0]
+        if len(drug) >= 1:
+            english_hebrew_names[drug[0][0].split()[0]] = drug[0][1].split()[0]
 
     drugs_serial_number = find_serials(list(english_hebrew_names.keys()))
     interaction_dict = {}
@@ -124,9 +125,10 @@ def find_interaction(drug_list):
         except:
             interaction_dict[i] = {}
             interaction_dict[i]['error'] = drug['name']
-
     if len(serial_numbers) <= 1:
         print(interaction_dict)
+        interaction_dict[0] = {}
+        interaction_dict[0]['error'] = drug_list[0]
         return interaction_dict
 
     serials = "+".join(serial_numbers)
@@ -144,8 +146,7 @@ def find_interaction(drug_list):
     return interaction_dict
 
 
-if __name__ == '__main__':
-    # list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
-    list1 = ['coumadin', 'paracetamol',"יומירה"]
-
-    find_interaction(list1)
+# if __name__ == '__main__':
+#     #     # list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
+#     list1 = ['humira', "aspirin"]
+#     find_interaction(list1)
