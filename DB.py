@@ -13,6 +13,12 @@ class DB:
     def creat_table(self):
         with self.connection as connect:
             cur = connect.cursor()
+
     def close_connection(self):
         self.connection.close()
 
+    def fetch_all_data(self, query):
+        with self.connection as conn:
+            cur = conn.cursor()
+            cur.execute(query)
+            return cur.fetchall()

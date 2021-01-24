@@ -1,5 +1,7 @@
 import requests
 import json
+from DB import DB
+from langdetect import detect
 
 '''
 In the current script I'm using an API for checking interaction between
@@ -42,11 +44,11 @@ def insert_severity(response_as_dict, interaction_dict, i):
     for j in range(len(severity_interaction_type)):
         if interaction_dict[i]['drug1_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
             'drug2_name'] \
-                in severity_interaction_type[j]['comment'] or interaction_dict[i]['drug1_generic_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
+                in severity_interaction_type[j]['comment'] or interaction_dict[i]['drug1_generic_name'] in \
+                severity_interaction_type[j]['comment'] and interaction_dict[i][
             'drug2_generic_name'] \
-                in severity_interaction_type[j]['comment'] :
+                in severity_interaction_type[j]['comment']:
             interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
-
 
 
 # parse the response JSON file from the API and build dictionary with relevant data
@@ -78,8 +80,33 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
     return interaction_dict
 
 
-# find the interaction between given drugs
+def check_names_from_db(drug_list):
+    data_base = DB()
+    names= data_base.fetch_all_data(
+        "SELECT english_name,hebrew_name FROM drug_name")
+    for row in names:
+        print("english name = ", row[0], )
+        print("hebrew name ", row[1])
+
+    # names = []
+    #
+    # for drug in drug_list:
+    #     if detect(drug) == 'he':
+    #         names.append(data_base.fetch_all_data(
+    #             "SELECT english_name,hebrew_name FROM drug_name WHERE hebrew_name = '{}'".format(drug)))
+    # print(names)
+
+    data_base.close_connection()
+
+            # find the interaction between given drugs
+
+
 def find_interaction(drug_list):
+    drug_names = check_names_from_db(drug_list)
+    exit(1)
+    # for drug in drug_list:
+    #     print(detect(drug))
+
     drugs_serial_number = find_serials(drug_list)
     interaction_dict = {}
 
@@ -104,15 +131,15 @@ def find_interaction(drug_list):
         res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=' + serials)
 
     else:
-        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials )
+        res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + serials)
 
     response_as_dict = json.loads(res.text)
     interaction_dict = build_interaction_dict(response_as_dict, drug_exist)
-    print(interaction_dict)
+
     return interaction_dict
 
 
-# if __name__ == '__main__':
-#     # list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol','coumadin','Morphine','Acepromazine']
-#     list = ['Fexofenadine', 'Humira']
-#     find_interaction(list)
+if __name__ == '__main__':
+    #     list = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
+    list = ['Fexofenadine', 'יומירה']
+    find_interaction(list)
