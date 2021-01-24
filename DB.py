@@ -17,8 +17,8 @@ class DB:
     def close_connection(self):
         self.connection.close()
 
-    def fetch_all_data(self, query):
+    def fetch_all_data(self, query, value):
         with self.connection as conn:
             cur = conn.cursor()
-            cur.execute(query)
+            cur.execute(query, (value,))
             return cur.fetchall()

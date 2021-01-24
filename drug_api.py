@@ -82,8 +82,10 @@ def build_interaction_dict(response_as_dict, drugs_serial_number):
 
 def check_names_from_db(drug_list):
     data_base = DB()
+    # names= data_base.fetch_all_data(
+    #     "SELECT english_name,hebrew_name FROM drug_name")
     names= data_base.fetch_all_data(
-        "SELECT english_name,hebrew_name FROM drug_name")
+        "SELECT english_name,hebrew_name FROM drug_name WHERE hebrew_name = %s ",'יומירה ')
     for row in names:
         print("english name = ", row[0], )
         print("hebrew name ", row[1])
