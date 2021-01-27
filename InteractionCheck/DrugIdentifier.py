@@ -7,6 +7,8 @@ import requests
 class DrugIdentifier:
     ''''
     In this class we'll identify all the drug details from the user drug name input.
+    The class retrieves the drug names and ingredients for the DB, and get the serial numbers from the API
+    Detail about the API you can find here: https://rxnav.nlm.nih.gov/InteractionAPIs.html#
     '''
 
     # get the name that the user inserted and initialize the relevant properties

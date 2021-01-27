@@ -3,6 +3,7 @@ import json
 from DB import DB
 from langdetect import detect
 from InteractionCheck.DrugIdentifier import DrugIdentifier
+from InteractionCheck.DrugInteractions import DrugInteractions
 
 '''
 In the current script I'm using an API for checking interaction between
@@ -124,7 +125,8 @@ def find_interaction(drug_list):
         except:
             data_base = DB()
             temp_drug_list = data_base.fetch_all_data(
-                "SELECT ingredients FROM drug_name WHERE english_name LIKE %s ", '%' + drug_name_id['name'].upper() + '%')
+                "SELECT ingredients FROM drug_name WHERE english_name LIKE %s ",
+                '%' + drug_name_id['name'].upper() + '%')
             first_drugs_serial_number.remove(drug_name_id)
             ingredients_list = temp_drug_list[0][0].split(';')
             new_drug_list = []
@@ -135,11 +137,8 @@ def find_interaction(drug_list):
             print(new_drugs_serial_number)
             data_base.close_connection()
 
-
     drugs_serial_number = first_drugs_serial_number + new_drugs_serial_number
     print(drugs_serial_number)
-
-
 
     interaction_dict = {}
     drug_exist = []
@@ -170,9 +169,15 @@ def find_interaction(drug_list):
     interaction_dict = build_interaction_dict(response_as_dict, drug_exist, english_hebrew_names)
     return interaction_dict
 
+
 if __name__ == '__main__':
     # list1 = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
     # # list2 = ['humira', "aspirin",'טלפסט','אקמול']
-    list1 = ["יומירה",'פמינט']
+    list1 = ["יומירה", 'פמינט']
     a = DrugIdentifier("paracetamol")
-
+    print()
+    b = DrugIdentifier('יומירה')
+    print()
+    c = DrugIdentifier('פמינט')
+    print()
+    DrugInteractions([a, b, c])
