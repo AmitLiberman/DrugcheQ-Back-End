@@ -15,7 +15,7 @@ class DrugIdentifier:
         self.drug_english_name = ''
         self.find_names()
 
-    # find Hebrew and English Names from data base
+    # find Hebrew and English Names from data base.
     def find_names(self):
         data_base = DB()
         # if the drug name written in Hebrew
