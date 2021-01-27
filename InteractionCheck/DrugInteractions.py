@@ -46,7 +46,6 @@ class DrugInteractions:
             interaction_dict[0] = {}
             interaction_dict[0]['comment'] = 'safe'
             return interaction_dict
-        print(full_interaction_type)
         # go over all the interactions and build the interaction_dict
         for i in range(len(full_interaction_type)):
             interaction_dict[i] = {}
@@ -59,19 +58,29 @@ class DrugInteractions:
 
             # if len(self.interaction_api_response['fullInteractionTypeGroup']) > 1:
             #     insert_severity(self.interaction_api_response, interaction_dict, i)
-
         return interaction_dict
 
     def insert_drug_name(self, full_interaction_type, interaction_dict, i, drug_num):
         rxcui = full_interaction_type[i]['minConcept'][drug_num - 1]['rxcui']
+        drug_name = full_interaction_type[i]['minConcept'][drug_num - 1]['name']
+
         for drug in self.drug_objects:
-            if drug.serial_number == rxcui:
-                if drug.drug_english_name.lower() != full_interaction_type[i]['minConcept'][drug_num - 1]['name'].lower():
-                    interaction_dict[i]['drug' + str(drug_num) + '_name'] = drug.drug_english_name
-                else:
-                    interaction_dict[i]['drug' + str(drug_num) + '_name'] = \
-                        full_interaction_type[i]['minConcept'][drug_num - 1]['name']
-                interaction_dict[i]['drug' + str(drug_num) + '_hebrew_name'] = drug.drug_hebrew_name
-                interaction_dict[i]['drug' + str(drug_num) + '_generic_name'] = \
-                    full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1][
-                        'sourceConceptItem']['name']
+            if drug.serial_number == 0:  # the drug defined by the it's ingredients
+                for ingredient_num in drug.ingredients_serials:
+                    if ingredient_num == rxcui: #if it is the drug we want
+                        interaction_dict[i]['drug' + str(drug_num) + '_name'] = drug.drug_english_name
+                        interaction_dict[i]['drug' + str(drug_num) + '_hebrew_name'] = drug.drug_hebrew_name
+                        interaction_dict[i]['drug' + str(drug_num) + '_generic_name'] = \
+                        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1][
+                            'sourceConceptItem']['name']
+            else:
+                if drug.serial_number == rxcui:
+                    if drug.drug_english_name.lower() != drug_name.lower():
+                        interaction_dict[i]['drug' + str(drug_num) + '_name'] = drug.drug_english_name
+                    else:
+                        interaction_dict[i]['drug' + str(drug_num) + '_name'] = \
+                            full_interaction_type[i]['minConcept'][drug_num - 1]['name']
+                    interaction_dict[i]['drug' + str(drug_num) + '_hebrew_name'] = drug.drug_hebrew_name
+                    interaction_dict[i]['drug' + str(drug_num) + '_generic_name'] = \
+                        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1][
+                            'sourceConceptItem']['name']
