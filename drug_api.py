@@ -2,6 +2,7 @@ import requests
 import json
 from DB import DB
 from langdetect import detect
+from InteractionCheck.DrugIdentifier import DrugIdentifier
 
 '''
 In the current script I'm using an API for checking interaction between
@@ -173,4 +174,5 @@ if __name__ == '__main__':
     # list1 = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
     # # list2 = ['humira', "aspirin",'טלפסט','אקמול']
     list1 = ["יומירה",'פמינט']
-    print(find_interaction(list1))
+    a = DrugIdentifier("paracetamol")
+
