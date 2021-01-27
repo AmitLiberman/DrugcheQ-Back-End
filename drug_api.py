@@ -171,13 +171,15 @@ def find_interaction(drug_list):
 
 
 if __name__ == '__main__':
-    # list1 = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine']
-    # # list2 = ['humira', "aspirin",'טלפסט','אקמול']
-    list1 = ["יומירה", 'פמינט']
-    a = DrugIdentifier("paracetamol")
-    print()
-    b = DrugIdentifier('יומירה')
-    print()
-    c = DrugIdentifier('פמינט')
-    print()
-    DrugInteractions([a, b, c])
+    list1 = ['rizatriptan', 'moclobemide', 'Humira', 'paracetamol', 'coumadin', 'Morphine', 'Acepromazine','aspirin','pentobarbital','פמינט']
+    # list1 = ['rizatriptan', 'moclobemide']
+
+    # list1 = ['rizatriptan', 'Humira', 'paracetamol', 'coumadin','Morphine']
+    # list2 = ['humira', "aspirin",'טלפסט','אקמול']
+    # list1 = ["יומירה", 'פמינט']
+
+
+    drug_objects = []
+    for drug in list(list1):
+        drug_objects.append(DrugIdentifier(drug))
+    interaction = DrugInteractions(drug_objects)

@@ -14,6 +14,8 @@ class DrugInteractions:
         self.drug_objects = drug_objects
         self.drug_serials = self.configure_serials()
         self.interaction_api_response = self.check_interaction()
+        print(self.interaction_api_response)
+
         self.interaction_results = self.build_interaction_results()
         print(self.interaction_results)
 
@@ -38,7 +40,7 @@ class DrugInteractions:
 
     def build_interaction_results(self):
         interaction_dict = {}
-        # try to find interaction between drug. if it fails - that's means there is bo interaction
+        # try to find interaction between drug. if it fails - that's means there is no interaction
         try:
             full_interaction_type = self.interaction_api_response['fullInteractionTypeGroup'][0]['fullInteractionType']
         except:
@@ -56,8 +58,9 @@ class DrugInteractions:
             interaction_dict[i]['description'] = full_interaction_type[i]['interactionPair'][0]['description']
             interaction_dict[i]['comment'] = full_interaction_type[i]['comment']
 
-            # if len(self.interaction_api_response['fullInteractionTypeGroup']) > 1:
-            #     insert_severity(self.interaction_api_response, interaction_dict, i)
+            # if the severity section exist
+            if len(self.interaction_api_response['fullInteractionTypeGroup']) > 1:
+                self.insert_severity(interaction_dict, i)
         return interaction_dict
 
     def insert_drug_name(self, full_interaction_type, interaction_dict, i, drug_num):
@@ -67,12 +70,12 @@ class DrugInteractions:
         for drug in self.drug_objects:
             if drug.serial_number == 0:  # the drug defined by the it's ingredients
                 for ingredient_num in drug.ingredients_serials:
-                    if ingredient_num == rxcui: #if it is the drug we want
+                    if ingredient_num == rxcui:  # if it is the drug we want
                         interaction_dict[i]['drug' + str(drug_num) + '_name'] = drug.drug_english_name
                         interaction_dict[i]['drug' + str(drug_num) + '_hebrew_name'] = drug.drug_hebrew_name
                         interaction_dict[i]['drug' + str(drug_num) + '_generic_name'] = \
-                        full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1][
-                            'sourceConceptItem']['name']
+                            full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1][
+                                'sourceConceptItem']['name']
             else:
                 if drug.serial_number == rxcui:
                     if drug.drug_english_name.lower() != drug_name.lower():
@@ -84,3 +87,15 @@ class DrugInteractions:
                     interaction_dict[i]['drug' + str(drug_num) + '_generic_name'] = \
                         full_interaction_type[i]['interactionPair'][0]['interactionConcept'][drug_num - 1][
                             'sourceConceptItem']['name']
+
+    # Insert severity if exists to response dictionary
+    def insert_severity(self, interaction_dict, i):
+        severity_interaction_type = self.interaction_api_respons['fullInteractionTypeGroup'][1]['fullInteractionType']
+        for j in range(len(severity_interaction_type)):
+            if interaction_dict[i]['drug1_name'] in severity_interaction_type[j]['comment'] and interaction_dict[i][
+                'drug2_name'] \
+                    in severity_interaction_type[j]['comment'] or interaction_dict[i]['drug1_generic_name'] in \
+                    severity_interaction_type[j]['comment'] and interaction_dict[i][
+                'drug2_generic_name'] \
+                    in severity_interaction_type[j]['comment']:
+                interaction_dict[i]['severity'] = severity_interaction_type[j]['interactionPair'][0]['severity']
