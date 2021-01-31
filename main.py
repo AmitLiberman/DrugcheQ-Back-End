@@ -10,6 +10,29 @@ cors = CORS(app)
 api = Api(app)
 
 
+class DrugSuggestions(Resource):
+    def get(self):
+        data_base = DB()
+        drug_list = data_base.fetch_all_data(
+            "SELECT english_name,hebrew_name FROM drug_name", '')
+        english_hebrew = {}
+        for drug in drug_list:
+            english_name = drug[0].split()[0]
+            hebrew_name = drug[1].split()[0]
+            if english_name not in english_hebrew and hebrew_name not in english_hebrew:
+                english_hebrew[english_name] = hebrew_name
+
+        drug_list_dict = {}
+        i = 0
+        for english_name, hebrew_name in english_hebrew.items():
+            drug_list_dict[i] = {}
+            drug_list_dict[i]['name'] = english_name
+            i += 1
+        data_base.close_connection()
+
+        return jsonify(drug_list_dict)
+
+
 class InteractionCheck(Resource):
     def get(self):
         drugs_sent = request.args
@@ -22,6 +45,7 @@ class InteractionCheck(Resource):
 
 
 api.add_resource(InteractionCheck, '/check')
+api.add_resource(DrugSuggestions, '/suggest')
 
 if __name__ == '__main__':
     app.run(debug=True)

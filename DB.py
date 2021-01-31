@@ -20,5 +20,8 @@ class DB:
     def fetch_all_data(self, query, value):
         with self.connection as conn:
             cur = conn.cursor()
-            cur.execute(query, (value,))
+            if value:
+                cur.execute(query, (value,))
+            else:
+                cur.execute(query)
             return cur.fetchall()
