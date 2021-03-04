@@ -20,11 +20,18 @@ class DrugIdentifier:
         self.ingredients = []
         self.ingredients_serials = []  # empty if there is no need for ingredients_serials
         self.serial_number = 0
+        self.remedy_number = ''
+        self.taking_form = ''
+        self.dosage_form = ''
+        self.prescription = ''
+        self.health_basket = ''
+        self.details = ''
 
         found_drug_names = self.find_names()  # updates drug_hebrew_name,drug_english_name
         if found_drug_names:
             self.find_ingredients()  # updates ingredients
-            self.find_serial_number()  # updates serial_number, ingredients_serials (if is needed)
+            self.find_other_data()
+            self.find_serial_number()  # u pdates serial_number, ingredients_serials (if is needed)
 
         print('User Insert: ', self.drug_user_name)
         print('Hebrew drug name: ', self.drug_hebrew_name)
@@ -70,6 +77,21 @@ class DrugIdentifier:
 
         for ingredient in ingredients_list:
             self.ingredients.append(ingredient.split()[0])
+        data_base.close_connection()
+
+    # find the ingredients of the drug from DB. Will help us later for searching interaction.
+    def find_other_data(self):
+        data_base = DB()
+        temp_form = data_base.fetch_all_data(
+            "SELECT remedy_number, how_taking, dosage_form, prescription, health_basket, details FROM drug_name WHERE english_name LIKE %s ",
+            '%' + self.drug_english_name.upper() + '%')
+        self.remedy_number = temp_form[0][0]
+        self.taking_form = temp_form[0][1]
+        self.dosage_form = temp_form[0][2]
+        self.prescription = temp_form[0][3]
+        self.health_basket = temp_form[0][4]
+        self.details = temp_form[0][5]
+
         data_base.close_connection()
 
     # find the drug serial number (rxcui) from the API

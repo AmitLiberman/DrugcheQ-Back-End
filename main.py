@@ -10,6 +10,7 @@ cors = CORS(app)
 api = Api(app)
 
 
+# suggestions for drug names when searching for one
 class DrugSuggestions(Resource):
     def get(self):
         data_base = DB()
@@ -33,10 +34,10 @@ class DrugSuggestions(Resource):
         return jsonify(drug_list_dict)
 
 
+# check interaction between drugs
 class InteractionCheck(Resource):
     def get(self):
         drugs_sent = request.args
-        # interaction_dict = drug_api.find_interaction(list(drugs_sent.keys()))
         drug_objects = []
         for drug in list(drugs_sent.keys()):
             drug_objects.append(DrugIdentifier(drug))
@@ -44,8 +45,16 @@ class InteractionCheck(Resource):
         return jsonify(interaction.build_interaction_results())
 
 
+# check interaction between drugs
+class DrugSearch(Resource):
+    def get(self):
+        drug_sent = list(request.args.keys())[0]
+        return 'searched'
+
+
 api.add_resource(InteractionCheck, '/check')
 api.add_resource(DrugSuggestions, '/suggest')
+api.add_resource(DrugSearch, '/drug-search')
 
 if __name__ == '__main__':
     app.run(debug=True)
