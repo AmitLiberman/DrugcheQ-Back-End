@@ -49,7 +49,9 @@ class InteractionCheck(Resource):
 class DrugSearch(Resource):
     def get(self):
         drug_sent = list(request.args.keys())[0]
-        return 'searched'
+        drug_details = DrugIdentifier(drug_sent)
+        print(drug_details.build_search_answer())
+        return jsonify(drug_details.build_search_answer())
 
 
 api.add_resource(InteractionCheck, '/check')

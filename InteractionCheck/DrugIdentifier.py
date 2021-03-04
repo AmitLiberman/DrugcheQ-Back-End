@@ -29,6 +29,7 @@ class DrugIdentifier:
 
         found_drug_names = self.find_names()  # updates drug_hebrew_name,drug_english_name
         if found_drug_names:
+            print('inf if')
             self.find_ingredients()  # updates ingredients
             self.find_other_data()
             self.find_serial_number()  # u pdates serial_number, ingredients_serials (if is needed)
@@ -90,7 +91,7 @@ class DrugIdentifier:
         self.dosage_form = temp_form[0][2]
         self.prescription = temp_form[0][3]
         self.health_basket = temp_form[0][4]
-        self.details = temp_form[0][5]
+        self.details = temp_form[0][5].replace('_x000D_', '\n')
 
         data_base.close_connection()
 
@@ -107,3 +108,10 @@ class DrugIdentifier:
                 response_as_dict = json.loads(api_response.text)
                 if 'rxnormId' in response_as_dict['idGroup']:
                     self.ingredients_serials.append(response_as_dict['idGroup']['rxnormId'][0])
+
+    def build_search_answer(self):
+        answer = {'drug_hebrew_name': self.drug_hebrew_name, 'drug_english_name': self.drug_english_name,
+                  'ingredients': self.ingredients, 'remedy_number': self.remedy_number, 'taking_form': self.taking_form,
+                  'dosage_form': self.dosage_form, 'prescription': self.prescription,
+                  'health_basket': self.health_basket, 'details': self.details}
+        return answer
