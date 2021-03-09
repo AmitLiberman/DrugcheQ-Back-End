@@ -43,7 +43,7 @@ class InteractionCheck(Resource):
             drug_objects.append(DrugIdentifier(drug))
 
         interaction = DrugInteractions(drug_objects)
-        return jsonify(interaction.build_interaction_results())
+        return jsonify(interaction.interaction_results)
 
 
 # check interaction between drugs
