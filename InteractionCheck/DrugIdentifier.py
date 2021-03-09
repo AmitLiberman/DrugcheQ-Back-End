@@ -29,7 +29,6 @@ class DrugIdentifier:
 
         found_drug_names = self.find_names()  # updates drug_hebrew_name,drug_english_name
         if found_drug_names:
-            print('inf if')
             self.find_ingredients()  # updates ingredients
             self.find_other_data()
             self.find_serial_number()  # u pdates serial_number, ingredients_serials (if is needed)

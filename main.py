@@ -41,6 +41,7 @@ class InteractionCheck(Resource):
         drug_objects = []
         for drug in list(drugs_sent.keys()):
             drug_objects.append(DrugIdentifier(drug))
+
         interaction = DrugInteractions(drug_objects)
         return jsonify(interaction.build_interaction_results())
 

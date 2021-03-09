@@ -11,17 +11,22 @@ class DrugInteractions:
     '''
 
     def __init__(self, drug_objects):
+        self.one_drug_interaction = False
         self.drug_objects = drug_objects
         self.drug_serials = self.configure_serials()
         self.interaction_api_response = self.check_interaction()
         print(self.interaction_api_response)
+        if self.one_drug_interaction is False:
+            self.interaction_results = self.build_interaction_results()
+        else:
+            self.interaction_results = self.build_full_interaction_results()
 
-        self.interaction_results = self.build_interaction_results()
         print(self.interaction_results)
 
     def configure_serials(self):
         serials = []
         for drug in self.drug_objects:
+
             if drug.serial_number != 0:
                 serials.append(drug.serial_number)
             else:
@@ -33,6 +38,7 @@ class DrugInteractions:
         # get request for the interaction api.
         if len(self.drug_objects) == 1:
             res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/interaction.json?rxcui=' + self.drug_serials)
+            self.one_drug_interaction = True
         else:
             res = requests.get('https://rxnav.nlm.nih.gov/REST/interaction/list.json?rxcuis=' + self.drug_serials)
 
@@ -43,6 +49,7 @@ class DrugInteractions:
         # try to find interaction between drug. if it fails - that's means there is no interaction
         try:
             full_interaction_type = self.interaction_api_response['fullInteractionTypeGroup'][0]['fullInteractionType']
+
         except:
             print('There is no interaction between the drugs')
             interaction_dict[0] = {}
@@ -62,6 +69,25 @@ class DrugInteractions:
             if len(self.interaction_api_response['fullInteractionTypeGroup']) > 1:
                 self.insert_severity(interaction_dict, i)
         return interaction_dict
+
+    def build_full_interaction_results(self):
+        interaction_dict = {}
+        try:
+            full_interaction_type = self.interaction_api_response['interactionTypeGroup'][0]['interactionType'][0][
+                'interactionPair']
+        except:
+            print('There is no interaction between the drugs')
+            interaction_dict[0] = {}
+            interaction_dict[0]['comment'] = 'safe'
+            return interaction_dict
+
+        for i in range(len(full_interaction_type)):
+            interaction_dict[i] = {"drugName": "", "Description": "", "severity": ""}
+            interaction_dict[i]["drugName"] =full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name']
+            interaction_dict[i]["Description"] = full_interaction_type[i]["description"]
+            interaction_dict[i]["severity"] = full_interaction_type[i]["severity"]
+        print(interaction_dict)
+
 
     def insert_drug_name(self, full_interaction_type, interaction_dict, i, drug_num):
         rxcui = full_interaction_type[i]['minConcept'][drug_num - 1]['rxcui']
