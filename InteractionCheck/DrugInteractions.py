@@ -15,13 +15,12 @@ class DrugInteractions:
         self.drug_objects = drug_objects
         self.drug_serials = self.configure_serials()
         self.interaction_api_response = self.check_interaction()
-        print(self.one_drug_interaction)
-        if self.one_drug_interaction ==0:
+        if self.one_drug_interaction == 0:
             self.interaction_results = self.build_interaction_results()
         else:
             self.interaction_results = self.build_full_results()
 
-        # print(self.interaction_results)
+        print(self.interaction_results)
 
     def configure_serials(self):
         serials = []
@@ -80,14 +79,21 @@ class DrugInteractions:
             interaction_dict[0] = {}
             interaction_dict[0]['comment'] = 'safe'
             return interaction_dict
-
+        interatction_drug_names = []
+        index = 0
         for i in range(len(full_interaction_type)):
-            interaction_dict[i] = {"drugName": "", "Description": "", "severity": ""}
-            interaction_dict[i]["drugName"] =full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name']
-            interaction_dict[i]["Description"] = full_interaction_type[i]["description"]
-            interaction_dict[i]["severity"] = full_interaction_type[i]["severity"]
+            if full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem'][
+                'name'] not in interatction_drug_names:
+                print('InIf')
+                interatction_drug_names.append(
+                    full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name'])
+                interaction_dict[index] = {"drugName": "", "Description": "", "severity": ""}
+                interaction_dict[index]["drugName"] = \
+                    full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name']
+                interaction_dict[index]["Description"] = full_interaction_type[i]["description"]
+                interaction_dict[index]["severity"] = full_interaction_type[i]["severity"]
+                index += 1
         return interaction_dict
-
 
     def insert_drug_name(self, full_interaction_type, interaction_dict, i, drug_num):
         rxcui = full_interaction_type[i]['minConcept'][drug_num - 1]['rxcui']
