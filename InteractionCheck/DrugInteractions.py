@@ -25,7 +25,6 @@ class DrugInteractions:
     def configure_serials(self):
         serials = []
         for drug in self.drug_objects:
-
             if drug.serial_number != 0:
                 serials.append(drug.serial_number)
             else:
@@ -81,19 +80,21 @@ class DrugInteractions:
             return interaction_dict
         interatction_drug_names = []
         index = 0
+        final_interaction_dict = []
         for i in range(len(full_interaction_type)):
-            if full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem'][
-                'name'] not in interatction_drug_names:
-                print('InIf')
+            if full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name'] not in \
+                    interatction_drug_names:
                 interatction_drug_names.append(
                     full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name'])
-                interaction_dict[index] = {"drugName": "", "Description": "", "severity": ""}
-                interaction_dict[index]["drugName"] = \
+                interaction_dict = {"drugName": "", "Description": "", "severity": ""}
+                interaction_dict["drugName"] = \
                     full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name']
-                interaction_dict[index]["Description"] = full_interaction_type[i]["description"]
-                interaction_dict[index]["severity"] = full_interaction_type[i]["severity"]
+                interaction_dict["Description"] = full_interaction_type[i]["description"]
+                interaction_dict["severity"] = full_interaction_type[i]["severity"]
+                final_interaction_dict.append(interaction_dict)
                 index += 1
-        return interaction_dict
+        res = sorted(final_interaction_dict, key=lambda k: k['drugName'])
+        return res
 
     def insert_drug_name(self, full_interaction_type, interaction_dict, i, drug_num):
         rxcui = full_interaction_type[i]['minConcept'][drug_num - 1]['rxcui']
