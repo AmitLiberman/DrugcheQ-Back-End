@@ -98,16 +98,14 @@ class DrugInteractions:
                     if full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name'].lower() == \
                             full_interaction_type_severity[j]['interactionConcept'][1]['sourceConceptItem'][
                                 'name'].lower():
-                        print(full_interaction_type_severity[j]['interactionConcept'][1]['sourceConceptItem'][
-                                  'name'].lower())
-                        interaction_dict["severity"] = full_interaction_type_severity[j]["severity"]
+                        interaction_dict["severity"] = 'High'
                         break
                 final_interaction_dict.append(interaction_dict)
                 index += 1
         res = list(sorted(final_interaction_dict, key=lambda k: k['drugName']))
         final_res = []
         for element in res:
-            if element["severity"] == 'high':
+            if element["severity"] == 'High':
                 final_res.insert(0, element)
             else:
                 final_res.append(element)
