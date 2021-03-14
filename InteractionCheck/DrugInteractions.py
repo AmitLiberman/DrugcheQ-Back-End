@@ -73,6 +73,9 @@ class DrugInteractions:
         try:
             full_interaction_type = self.interaction_api_response['interactionTypeGroup'][0]['interactionType'][0][
                 'interactionPair']
+            full_interaction_type_severity = \
+                self.interaction_api_response['interactionTypeGroup'][1]['interactionType'][0][
+                    'interactionPair']
         except:
             print('There is no interaction between the drugs full')
             interaction_dict[0] = {}
@@ -90,11 +93,25 @@ class DrugInteractions:
                 interaction_dict["drugName"] = \
                     full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name']
                 interaction_dict["Description"] = full_interaction_type[i]["description"]
-                interaction_dict["severity"] = full_interaction_type[i]["severity"]
+                for j in range(len(full_interaction_type_severity)):
+                    interaction_dict["severity"] = '-'
+                    if full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name'].lower() == \
+                            full_interaction_type_severity[j]['interactionConcept'][1]['sourceConceptItem'][
+                                'name'].lower():
+                        print(full_interaction_type_severity[j]['interactionConcept'][1]['sourceConceptItem'][
+                                  'name'].lower())
+                        interaction_dict["severity"] = full_interaction_type_severity[j]["severity"]
+                        break
                 final_interaction_dict.append(interaction_dict)
                 index += 1
-        res = sorted(final_interaction_dict, key=lambda k: k['drugName'])
-        return res
+        res = list(sorted(final_interaction_dict, key=lambda k: k['drugName']))
+        final_res = []
+        for element in res:
+            if element["severity"] == 'high':
+                final_res.insert(0, element)
+            else:
+                final_res.append(element)
+        return final_res
 
     def insert_drug_name(self, full_interaction_type, interaction_dict, i, drug_num):
         rxcui = full_interaction_type[i]['minConcept'][drug_num - 1]['rxcui']
