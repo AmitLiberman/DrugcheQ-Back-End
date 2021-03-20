@@ -54,10 +54,18 @@ class DrugSearch(Resource):
         print(drug_details.build_search_answer())
         return jsonify(drug_details.build_search_answer())
 
+class SideEfeecetReport(Resource):
+    def post(self):
+        drug_sent = request.get_json(force=True)
+        print(drug_sent)
+
+
 
 api.add_resource(InteractionCheck, '/check')
 api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
+api.add_resource(SideEfeecetReport, '/side-effect-report')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
