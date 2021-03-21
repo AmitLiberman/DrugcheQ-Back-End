@@ -69,18 +69,28 @@ class DrugInteractions:
         return interaction_dict
 
     def build_full_results(self):
+
+
         interaction_dict = {}
+
+
+
         try:
             full_interaction_type = self.interaction_api_response['interactionTypeGroup'][0]['interactionType'][0][
                 'interactionPair']
-            full_interaction_type_severity = \
-                self.interaction_api_response['interactionTypeGroup'][1]['interactionType'][0][
-                    'interactionPair']
+
         except:
             print('There is no interaction between the drugs full')
             interaction_dict[0] = {}
             interaction_dict[0]['comment'] = 'safe'
             return interaction_dict
+        full_interaction_type_severity = ""
+        try:
+            full_interaction_type_severity = \
+                self.interaction_api_response['interactionTypeGroup'][1]['interactionType'][0][
+                    'interactionPair']
+        except:
+            pass
         interatction_drug_names = []
         index = 0
         final_interaction_dict = []
@@ -93,13 +103,14 @@ class DrugInteractions:
                 interaction_dict["drugName"] = \
                     full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name']
                 interaction_dict["Description"] = full_interaction_type[i]["description"]
+                interaction_dict["severity"] = '-'
                 for j in range(len(full_interaction_type_severity)):
-                    interaction_dict["severity"] = '-'
-                    if full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name'].lower() == \
-                            full_interaction_type_severity[j]['interactionConcept'][1]['sourceConceptItem'][
-                                'name'].lower():
-                        interaction_dict["severity"] = 'High'
-                        break
+                    if full_interaction_type_severity != "":
+                        if full_interaction_type[i]['interactionConcept'][1]['sourceConceptItem']['name'].lower() == \
+                                full_interaction_type_severity[j]['interactionConcept'][1]['sourceConceptItem'][
+                                    'name'].lower():
+                            interaction_dict["severity"] = 'High'
+                            break
                 final_interaction_dict.append(interaction_dict)
                 index += 1
         res = list(sorted(final_interaction_dict, key=lambda k: k['drugName']))

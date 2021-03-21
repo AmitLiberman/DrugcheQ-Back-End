@@ -60,7 +60,6 @@ class SideEfeecetReport(Resource):
         print(drug_sent)
 
 
-
 api.add_resource(InteractionCheck, '/check')
 api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
