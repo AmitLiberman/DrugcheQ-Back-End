@@ -48,8 +48,13 @@ class DrugIdentifier:
         if self.drug_user_name.isspace():
             return False
 
+        try:
+            lang_detected = detect(self.drug_user_name)
+        except:
+            return False
+
         # if the drug name written in Hebrew
-        if detect(self.drug_user_name) == 'he':
+        if lang_detected == 'he':
             drug_names = data_base.fetch_all_data(
                 "SELECT english_name,hebrew_name FROM drug_name WHERE hebrew_name LIKE %s ",
                 '%' + self.drug_user_name + '%')
