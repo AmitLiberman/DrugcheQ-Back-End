@@ -21,7 +21,7 @@ class DrugInteractions:
             self.interaction_results = self.build_full_results()
         else:
             # TO:DO : return dictionary with the unknown drugs
-            interaction_dict = {'comment': 'drug not found'}
+            interaction_dict = {'error': 'drug ' + self.drug_objects.drug_user_name + 'not found'}
             print('Drugs not found')
             self.interaction_results = interaction_dict
 
@@ -80,7 +80,6 @@ class DrugInteractions:
         try:
             full_interaction_type = self.interaction_api_response['interactionTypeGroup'][0]['interactionType'][0][
                 'interactionPair']
-
         except:
             print('There is no interaction between the drugs full')
             interaction_dict[0] = {}

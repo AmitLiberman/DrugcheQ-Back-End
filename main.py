@@ -22,14 +22,17 @@ class DrugSuggestions(Resource):
             hebrew_name = drug[1].split()[0]
             if english_name not in english_hebrew and hebrew_name not in english_hebrew:
                 english_hebrew[english_name] = hebrew_name
-
         drug_list_dict = {}
         i = 0
         for english_name, hebrew_name in english_hebrew.items():
             drug_list_dict[i] = {}
             drug_list_dict[i]['name'] = english_name
             i += 1
+            drug_list_dict[i] = {}
+            drug_list_dict[i]['name'] = hebrew_name
+            i += 1
         data_base.close_connection()
+        print(drug_list_dict)
 
         return jsonify(drug_list_dict)
 
@@ -54,6 +57,7 @@ class DrugSearch(Resource):
         print(drug_details.build_search_answer())
         return jsonify(drug_details.build_search_answer())
 
+
 class SideEfeecetReport(Resource):
     def post(self):
         drug_sent = request.get_json(force=True)
@@ -64,7 +68,6 @@ api.add_resource(InteractionCheck, '/check')
 api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
 api.add_resource(SideEfeecetReport, '/side-effect-report')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
