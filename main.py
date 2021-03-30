@@ -22,15 +22,14 @@ class DrugSuggestions(Resource):
             hebrew_name = drug[1].split()[0]
             if english_name not in english_hebrew and hebrew_name not in english_hebrew:
                 english_hebrew[english_name] = hebrew_name
-        drug_list_dict = {}
+        drug_list_dict = []
+        dict ={}
         i = 0
         for english_name, hebrew_name in english_hebrew.items():
-            drug_list_dict[i] = {}
-            drug_list_dict[i]['name'] = english_name
-            i += 1
-            drug_list_dict[i] = {}
-            drug_list_dict[i]['name'] = hebrew_name
-            i += 1
+            dict['name'] = english_name
+            drug_list_dict.append(dict.copy())
+            dict['name'] = hebrew_name
+            drug_list_dict.append(dict.copy())
         data_base.close_connection()
         print(drug_list_dict)
 
