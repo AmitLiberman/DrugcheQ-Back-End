@@ -23,7 +23,7 @@ class DrugSuggestions(Resource):
             if english_name not in english_hebrew and hebrew_name not in english_hebrew:
                 english_hebrew[english_name] = hebrew_name
         drug_list_dict = []
-        dict ={}
+        dict = {}
         i = 0
         for english_name, hebrew_name in english_hebrew.items():
             dict['name'] = english_name
@@ -36,7 +36,7 @@ class DrugSuggestions(Resource):
         return jsonify(drug_list_dict)
 
 
-# check interaction between drugs
+# check interaction between drugs 1
 class InteractionCheck(Resource):
     def get(self):
         drugs_sent = request.args
