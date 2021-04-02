@@ -14,6 +14,7 @@ class DB:
         with self.connection as connect:
             cur = connect.cursor()
 
+
     def close_connection(self):
         self.connection.close()
 
