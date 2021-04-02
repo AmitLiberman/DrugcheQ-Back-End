@@ -5,13 +5,21 @@ from connection_config import connection_config
 def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
+        # """
+        # CREATE TABLE private_user_details (
+        #     id SERIAL PRIMARY KEY,
+        #     user_name VARCHAR(255) NOT NULL,
+        #     email VARCHAR(255) NOT NULL
+        # )
+        # """,
         """
-        CREATE TABLE private_user_details (
+        CREATE TABLE report_details (
             id SERIAL PRIMARY KEY,
-            user_name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL
+            drugs text[] NOT NULL,
+            symptoms text[] NOT NULL
         )
-        """,)
+        """,
+    )
     conn = None
     try:
         # read the connection parameters
