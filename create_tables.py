@@ -8,7 +8,6 @@ def create_tables():
         """
         CREATE TABLE private_user_details (
             serial SERIAL PRIMARY KEY,
-            user_id INTEGER , 
             user_name text NOT NULL,
             email text NOT NULL,
             real_data BOOLEAN
@@ -19,6 +18,7 @@ def create_tables():
             serial SERIAL PRIMARY KEY,
             drugs text[] NOT NULL,
             symptoms text[] NOT NULL,
+            sector text NOT NULL,
             real_data BOOLEAN
         )
         """,

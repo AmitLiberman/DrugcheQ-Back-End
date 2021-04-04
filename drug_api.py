@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     data_base = DB()
     postgres_insert_query = """ INSERT INTO private_user_details (user_id, user_name, email, real_data) VALUES (%s,%s,%s,%s)"""
-    record_to_insert = (45455, 'plony', 'asdsa@afssa', False)
+    record_to_insert = ( 'plony', 'asdsa@afssa', False)
     data_base.insert_row(postgres_insert_query, record_to_insert)
     postgres_insert_query = """ INSERT INTO report_details (drugs, symptoms, real_data) VALUES (%s,%s,%s)"""
     record_to_insert = (['humira'],['סחרחורת'], False)

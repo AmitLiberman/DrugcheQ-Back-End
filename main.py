@@ -59,8 +59,26 @@ class DrugSearch(Resource):
 
 class SideEfeecetReport(Resource):
     def post(self):
+        real = False
         drug_sent = request.get_json(force=True)
         print(drug_sent)
+
+        user_data = (drug_sent['username'], drug_sent['email'],real)
+        print(user_data)
+
+        drug_list = [item['name'] for item in drug_sent['drugList']]
+        print(drug_list)
+
+        symptom_list = [item['name'] for item in drug_sent['symptomsList']]
+        print(symptom_list)
+        report_data = (drug_list, symptom_list, drug_sent['sector'],real)
+        print(report_data)
+        data_base = DB()
+        postgres_insert_query = """ INSERT INTO private_user_details (user_name, email, real_data) VALUES (%s,%s,%s)"""
+        data_base.insert_data_row(postgres_insert_query, user_data)
+        postgres_insert_query = """ INSERT INTO report_details (drugs, symptoms, sector, real_data) VALUES (%s,%s,%s,%s)"""
+        data_base.insert_data_row(postgres_insert_query, report_data)
+        data_base.close_connection()
 
 
 api.add_resource(InteractionCheck, '/check')
