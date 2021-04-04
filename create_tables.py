@@ -5,20 +5,24 @@ from connection_config import connection_config
 def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
-        # """
-        # CREATE TABLE private_user_details (
-        #     id SERIAL PRIMARY KEY,
-        #     user_name VARCHAR(255) NOT NULL,
-        #     email VARCHAR(255) NOT NULL
-        # )
-        # """,
         """
-        CREATE TABLE report_details (
-            id SERIAL PRIMARY KEY,
-            drugs text[] NOT NULL,
-            symptoms text[] NOT NULL
+        CREATE TABLE private_user_details (
+            serial SERIAL PRIMARY KEY,
+            user_id INTEGER , 
+            user_name text NOT NULL,
+            email text NOT NULL,
+            real_data BOOLEAN
         )
         """,
+        """
+        CREATE TABLE report_details (
+            serial SERIAL PRIMARY KEY,
+            drugs text[] NOT NULL,
+            symptoms text[] NOT NULL,
+            real_data BOOLEAN
+        )
+        """,
+
     )
     conn = None
     try:
@@ -29,6 +33,9 @@ def create_tables():
         # create table one by one
         for command in commands:
             cur.execute(command)
+        # cur.execute('DROP TABLE "private_user_details";')
+        # cur.execute('DROP TABLE "report_details";')
+
         # close communication with the PostgreSQL database server
         cur.close()
         # commit the changes
