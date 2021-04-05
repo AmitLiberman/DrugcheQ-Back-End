@@ -5,6 +5,7 @@ from DB import DB
 from InteractionCheck.DrugIdentifier import DrugIdentifier
 from InteractionCheck.DrugInteractions import DrugInteractions
 import logging
+import sys
 
 
 
