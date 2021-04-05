@@ -1,7 +1,8 @@
 from DB import DB
-# from langdetect import detect
+from langdetect import detect
 import json
 import requests
+
 
 class DrugIdentifier:
     ''''
@@ -87,7 +88,8 @@ class DrugIdentifier:
     def find_other_data(self):
         data_base = DB()
         temp_form = data_base.fetch_all_data(
-            "SELECT remedy_number, how_taking, dosage_form, prescription, health_basket, details FROM drug_name WHERE english_name LIKE %s ",
+            "SELECT remedy_number, how_taking, dosage_form, prescription, health_basket, details FROM drug_name WHERE "
+            "english_name LIKE %s ",
             '%' + self.drug_english_name.upper() + '%')
         self.remedy_number = temp_form[0][0]
         self.taking_form = temp_form[0][1]

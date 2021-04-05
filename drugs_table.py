@@ -19,5 +19,7 @@ def main():
     # make final dataframe
     final_df = df[['remedy_number', 'english_name', 'hebrew_name', 'ingredients', 'details', 'dosage_form','how_taking',
                      'prescription', 'health_basket']]
-    engine = create_engine('postgres://vrlaozxymgbowo:57941d7c9247c6cd0bc40e4467ed998eece037cc7c5dcafe6515820ec4095f0f@ec2-54-76-215-139.eu-west-1.compute.amazonaws.com:5432/d984k5vt1jr9rs')
+    engine = create_engine('postgres://vrlaozxymgbowo'
+                           ':57941d7c9247c6cd0bc40e4467ed998eece037cc7c5dcafe6515820ec4095f0f@ec2-54-76-215-139.eu'
+                           '-west-1.compute.amazonaws.com:5432/d984k5vt1jr9rs') 
     final_df.to_sql('drug_name', engine)

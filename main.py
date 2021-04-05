@@ -72,7 +72,8 @@ class SideEfeecetReport(Resource):
         data_base = DB()
         postgres_insert_query = """ INSERT INTO private_user_details (user_name, email, real_data) VALUES (%s,%s,%s)"""
         data_base.insert_data_row(postgres_insert_query, user_data)
-        postgres_insert_query = """ INSERT INTO report_details (drugs, symptoms, sector, real_data) VALUES (%s,%s,%s,%s)"""
+        postgres_insert_query = """INSERT INTO report_details (drugs, symptoms, sector, real_data) VALUES (%s,%s,%s,
+        %s) """
         data_base.insert_data_row(postgres_insert_query, report_data)
         data_base.close_connection()
 
