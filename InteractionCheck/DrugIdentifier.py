@@ -3,7 +3,6 @@ from langdetect import detect
 import json
 import requests
 
-
 class DrugIdentifier:
     ''''
     In this class we'll identify all the drug details from the user drug name input.
