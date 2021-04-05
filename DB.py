@@ -9,7 +9,7 @@ class DB:
     def connect_data_base(self):
         connection_config = os.environ['DATABASE_URL']
         connection = psycopg2.connect(connection_config)
-         return connection
+        return connection
 
     def creat_table(self):
         with self.connection as connect:
