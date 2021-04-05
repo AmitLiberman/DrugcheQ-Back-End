@@ -1,5 +1,5 @@
 from DB import DB
-from langdetect import detect
+# from langdetect import detect
 import json
 import requests
 
