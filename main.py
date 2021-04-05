@@ -82,7 +82,7 @@ app.logger.setLevel(logging.ERROR)
 #         data_base.close_connection()
 
 class home(Resource):
-    def post(self):
+    def get(self):
         return 'hi'
 
 
