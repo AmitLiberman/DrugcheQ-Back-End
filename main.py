@@ -63,15 +63,11 @@ class SideEfeecetReport(Resource):
         drug_sent = request.get_json(force=True)
         print(drug_sent)
 
-        user_data = (drug_sent['username'], drug_sent['email'],real)
-        print(user_data)
-
+        user_data = (drug_sent['username'], drug_sent['email'], real)
         drug_list = [item['name'] for item in drug_sent['drugList']]
-        print(drug_list)
-
         symptom_list = [item['name'] for item in drug_sent['symptomsList']]
+        report_data = (drug_list, symptom_list, drug_sent['sector'], real)
         print(symptom_list)
-        report_data = (drug_list, symptom_list, drug_sent['sector'],real)
         print(report_data)
         data_base = DB()
         postgres_insert_query = """ INSERT INTO private_user_details (user_name, email, real_data) VALUES (%s,%s,%s)"""
