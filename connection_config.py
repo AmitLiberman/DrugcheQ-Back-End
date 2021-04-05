@@ -1,5 +1,4 @@
-
- connection_config = """
+connection_config = """
         dbname='d984k5vt1jr9rs'
         user='vrlaozxymgbowo'
         password='57941d7c9247c6cd0bc40e4467ed998eece037cc7c5dcafe6515820ec4095f0f'
