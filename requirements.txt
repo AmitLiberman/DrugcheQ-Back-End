@@ -7,4 +7,3 @@ sqlalchemy
 pandas
 requests
 langdetect
-json
