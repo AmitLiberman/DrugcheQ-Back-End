@@ -7,5 +7,4 @@ sqlalchemy
 pandas
 requests
 langdetect
-logging
 sys
