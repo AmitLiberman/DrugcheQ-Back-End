@@ -31,7 +31,6 @@ class DB:
             cur = conn.cursor()
             try:
                 postgres_insert_query = query
-                # record_to_insert = (5, 'One Plus 6', 950)
                 cur.execute(postgres_insert_query, data)
 
                 conn.commit()
