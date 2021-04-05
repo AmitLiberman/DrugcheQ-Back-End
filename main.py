@@ -4,10 +4,16 @@ from flask_restful import Api, Resource
 from DB import DB
 from InteractionCheck.DrugIdentifier import DrugIdentifier
 from InteractionCheck.DrugInteractions import DrugInteractions
+import logging
+
+
 
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
+
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
 
 
 # suggestions for drug names when searching for one
