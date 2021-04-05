@@ -7,8 +7,6 @@ from InteractionCheck.DrugInteractions import DrugInteractions
 import logging
 import sys
 
-
-
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
@@ -31,7 +29,6 @@ class DrugSuggestions(Resource):
                 english_hebrew[english_name] = hebrew_name
         drug_list_dict = []
         dict = {}
-        i = 0
         for english_name, hebrew_name in english_hebrew.items():
             dict['name'] = english_name
             drug_list_dict.append(dict.copy())
