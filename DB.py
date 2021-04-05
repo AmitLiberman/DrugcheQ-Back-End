@@ -1,13 +1,14 @@
 import psycopg2
-from connection_config import connection_config
-
+# from connection_config import connection_config
+import os
 
 class DB:
     def __init__(self):
         self.connection = self.connect_data_base()
 
     def connect_data_base(self):
-        connection = psycopg2.connect(connection_config)
+        # connection = psycopg2.connect(connection_config)
+        connection = os.environ['DATABASE_URL']
         return connection
 
     def creat_table(self):
