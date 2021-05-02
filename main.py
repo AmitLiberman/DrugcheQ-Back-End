@@ -65,32 +65,23 @@ class SideEfeecetReport(Resource):
         user_data = (drug_sent['factorName'], drug_sent['email'], drug_sent['phoneNumber'], drug_sent['sector'],
                      drug_sent['medicalSector'], real)
 
-        print(drug_sent['factorName'], drug_sent['email'], drug_sent['phoneNumber'], drug_sent['sector'],
-              drug_sent['medicalSector'])
         drug_list = [item['name'] for item in drug_sent['drugList']]
         untilDate_list = [item['untilDate'] for item in drug_sent['drugList']]
         fromDate_list = [item['fromDate'] for item in drug_sent['drugList']]
         symptom_list = [item['name'] for item in drug_sent['symptomList']]
         severity_list = [item['severity'] for item in drug_sent['symptomList']]
         appearDate_list = [item['appearDate'] for item in drug_sent['symptomList']]
-        print(drug_list)
-        print(untilDate_list)
-        print(fromDate_list)
-        print(symptom_list)
-        print(severity_list)
-        print(appearDate_list)
 
-        # report_data = (drug_list, symptom_list, drug_sent['sector'], real)
-        # print(symptom_list)
-        # print(report_data)
-        # data_base = DB()
-        # postgres_insert_query = """ INSERT INTO private_user_details (factor_name, email,phone,sector,medical_sector, real_data)\
-        #  VALUES (%s,%s,%s,%s,%s,%s)"""
-        # data_base.insert_data_row(postgres_insert_query, user_data)
-        # postgres_insert_query = """INSERT INTO report_details (drugs,fromDate,untilDate, symptoms,severity,appearDate sector, real_data) VALUES \
-        # (%s,%s,%s, %s,%s,%s,%s) """
-        # data_base.insert_data_row(postgres_insert_query, report_data)
-        # data_base.close_connection()
+        report_data = (drug_list, fromDate_list, untilDate_list, severity_list, appearDate_list, symptom_list, real)
+        print(report_data)
+        data_base = DB()
+        postgres_insert_query = """ INSERT INTO private_user_details (factor_name, email,phone,sector,medical_sector, real_data)\
+         VALUES (%s,%s,%s,%s,%s,%s)"""
+        data_base.insert_data_row(postgres_insert_query, user_data)
+        postgres_insert_query = """INSERT INTO report_details (drugs,fromDate,untilDate, symptoms,severity,appearDate, real_data) VALUES \
+        (%s,%s,%s, %s,%s,%s,%s) """
+        data_base.insert_data_row(postgres_insert_query, report_data)
+        data_base.close_connection()
 
 
 api.add_resource(InteractionCheck, '/check')
