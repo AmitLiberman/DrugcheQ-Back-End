@@ -8,8 +8,11 @@ def create_tables():
         """
         CREATE TABLE private_user_details (
             serial SERIAL PRIMARY KEY,
-            user_name text NOT NULL,
+            factor_name text NOT NULL,
             email text NOT NULL,
+            phone text NOT NULL,
+            sector text NOT NULL,
+            medical_sector,
             real_data BOOLEAN
         )
         """,
@@ -17,8 +20,11 @@ def create_tables():
         CREATE TABLE report_details (
             serial SERIAL PRIMARY KEY,
             drugs text[] NOT NULL,
+            fromDate text[] NOT NULL,
+            untilDate text[] NOT NULL,
             symptoms text[] NOT NULL,
-            sector text NOT NULL,
+            severity text[]  NOT NULL,
+            appearDate text[] NOT NULL,
             real_data BOOLEAN
         )
         """,
@@ -31,10 +37,10 @@ def create_tables():
         conn = psycopg2.connect(connection_config)
         cur = conn.cursor()
         # create table one by one
-        for command in commands:
-            cur.execute(command)
-        # cur.execute('DROP TABLE "private_user_details";')
-        # cur.execute('DROP TABLE "report_details";')
+        # for command in commands:
+        #     cur.execute(command)
+        cur.execute('DROP TABLE "private_user_details";')
+        cur.execute('DROP TABLE "report_details";')
 
         # close communication with the PostgreSQL database server
         cur.close()
@@ -47,5 +53,5 @@ def create_tables():
             conn.close()
 
 #
-# if __name__ == '__main__':
-#     create_tables()
+if __name__ == '__main__':
+    create_tables()
