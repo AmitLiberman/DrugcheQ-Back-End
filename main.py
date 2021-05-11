@@ -46,6 +46,20 @@ class InteractionCheck(Resource):
         interaction = DrugInteractions(drug_objects)
         return jsonify(interaction.interaction_results)
 
+    # get stats of interactions
+
+
+class InteractionStats(Resource):
+    def get(self):
+        stats = {}
+        stats['symptoms'] = {}
+        stats['symptoms']['עייפות'] = 100
+        stats['symptoms']['חולשה'] = 70
+        stats['symptoms']['כאב בטן'] = 50
+        stats['symptoms']['אדמומיות'] = 30
+        print(stats)
+        return jsonify(stats)
+
 
 # check interaction between drugs
 class DrugSearch(Resource):
@@ -85,6 +99,8 @@ class SideEfeecetReport(Resource):
 
 
 api.add_resource(InteractionCheck, '/check')
+api.add_resource(InteractionStats, '/stats')
+
 api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
 api.add_resource(SideEfeecetReport, '/side-effect-report')
