@@ -71,7 +71,7 @@ class DrugSearch(Resource):
 
 class SideEfeecetReport(Resource):
     def post(self):
-        real = True
+        real = False
         drug_sent = request.get_json(force=True)
         print(drug_sent)
 

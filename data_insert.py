@@ -1,15 +1,23 @@
 from DB import DB
 
+# Example
+# (['DAKTARIN', 'TARODENT'],
+# ['2021-05-05', '2021-04-27'],
+# ['2021-05-10', '2021-05-04'],
+# ['sever', 'notSever'],
+# ['2021-04-25', '2021-05-23'],
+# ['עייפות', 'דפיקות לב מהירות'], False)
+
 if __name__ == '__main__':
     data_base = DB()
 
     real = False
-    drug_list = [item['name'] for item in drug_sent['drugList']]
-    untilDate_list = [item['untilDate'] for item in drug_sent['drugList']]
-    fromDate_list = [item['fromDate'] for item in drug_sent['drugList']]
-    symptom_list = [item['name'] for item in drug_sent['symptomList']]
-    severity_list = [item['severity'] for item in drug_sent['symptomList']]
-    appearDate_list = [item['appearDate'] for item in drug_sent['symptomList']]
+    drug_list = []
+    untilDate_list = []
+    fromDate_list = []
+    symptom_list = []
+    severity_list = []
+    appearDate_list = []
 
     report_data = (drug_list, fromDate_list, untilDate_list, severity_list, appearDate_list, symptom_list, real)
     postgres_insert_query = """INSERT INTO report_details (drugs,fromDate,untilDate, symptoms,severity,appearDate, real_data) VALUES \
