@@ -9,7 +9,6 @@ app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
 
-
 # suggestions for drug names when searching for one
 class DrugSuggestions(Resource):
     def get(self):
@@ -78,7 +77,6 @@ class SideEfeecetReport(Resource):
 
         user_data = (drug_sent['factorName'], drug_sent['email'], drug_sent['phoneNumber'], drug_sent['sector'],
                      drug_sent['medicalSector'], real)
-
         drug_list = [item['name'] for item in drug_sent['drugList']]
         untilDate_list = [item['untilDate'] for item in drug_sent['drugList']]
         fromDate_list = [item['fromDate'] for item in drug_sent['drugList']]
