@@ -50,17 +50,6 @@ class InteractionCheck(Resource):
 # get stats of interactions
 class InteractionStats(Resource):
     def get(self):
-        # stats = {}
-        # stats['symptoms'] = {}
-        # stats['symptoms']['עייפות'] = 100
-        # stats['symptoms']['חולשה'] = 70
-        # stats['symptoms']['כאב בטן'] = 50
-        # stats['symptoms']['אדמומיות'] = 30
-        # stats['report_num'] = 5
-        # stats['severity'] = {}
-        # stats['severity']['severe'] = 10
-        # stats['severity']['not_severe'] = 5
-
         stats = {}
         stats['symptoms'] = {}
         stats['report_num'] = 0
@@ -74,8 +63,7 @@ class InteractionStats(Resource):
             "SELECT drugs,symptoms,severity FROM report_details WHERE serial>6", '')
         for element in symptoms_stats:
             check = all(item in element[0] for item in list(drugs_sent.keys()))
-            if check:
-                print("IN IF")
+            if check and len(list(drugs_sent.keys())) / len(element[0]) >= 0.6:
                 stats['report_num'] += 1
                 for symptom in element[1]:
                     if symptom not in stats['symptoms']:
@@ -84,6 +72,38 @@ class InteractionStats(Resource):
                 for severity in element[2]:
                     if severity != "":
                         stats['severity'][severity] += 1
+        print(stats)
+        data_base.close_connection()
+
+        return jsonify(stats)
+
+
+# get stats of one drug
+class SearchStats(Resource):
+    def get(self):
+        stats = {}
+        stats['symptoms'] = {}
+        stats['report_num'] = 0
+        stats['severity'] = {}
+        stats['severity']['sever'] = 0
+        stats['severity']['notSever'] = 0
+
+        drug_sent = request.args
+        data_base = DB()
+
+        symptoms_stats = data_base.fetch_all_data(
+            "SELECT drugs,symptoms,severity FROM report_details WHERE serial>6", '')
+        for element in symptoms_stats:
+            if list(drug_sent.keys())[0] in element[0] or list(drug_sent.keys())[1] in element[0]:
+                stats['report_num'] += 1
+                for symptom in element[1]:
+                    if symptom not in stats['symptoms']:
+                        stats['symptoms'][symptom] = 0
+                    stats['symptoms'][symptom] += 1
+                for severity in element[2]:
+                    if severity != "":
+                        stats['severity'][severity] += 1
+        data_base.close_connection()
         print(stats)
         return jsonify(stats)
 
@@ -129,6 +149,7 @@ api.add_resource(InteractionStats, '/stats')
 api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
 api.add_resource(SideEfecetReport, '/side-effect-report')
+api.add_resource(SearchStats, '/search-stats')
 
 if __name__ == '__main__':
     app.run(debug=True)
