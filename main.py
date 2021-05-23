@@ -65,6 +65,9 @@ class InteractionStats(Resource):
         stats['symptoms'] = {}
         stats['report_num'] = 0
         stats['severity'] = {}
+        stats['severity']['sever'] = 0
+        stats['severity']['notSever'] = 0
+
         drugs_sent = request.args
         data_base = DB()
         symptoms_stats = data_base.fetch_all_data(
@@ -79,9 +82,8 @@ class InteractionStats(Resource):
                         stats['symptoms'][symptom] = 0
                     stats['symptoms'][symptom] += 1
                 for severity in element[2]:
-                    if severity not in stats['severity']:
-                        stats['severity'][severity] = 0
-                    stats['severity'][severity] += 1
+                    if severity != "":
+                        stats['severity'][severity] += 1
         print(stats)
         return jsonify(stats)
 
