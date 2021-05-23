@@ -50,17 +50,38 @@ class InteractionCheck(Resource):
 # get stats of interactions
 class InteractionStats(Resource):
     def get(self):
+        # stats = {}
+        # stats['symptoms'] = {}
+        # stats['symptoms']['עייפות'] = 100
+        # stats['symptoms']['חולשה'] = 70
+        # stats['symptoms']['כאב בטן'] = 50
+        # stats['symptoms']['אדמומיות'] = 30
+        # stats['report_num'] = 5
+        # stats['severity'] = {}
+        # stats['severity']['severe'] = 10
+        # stats['severity']['not_severe'] = 5
+
         stats = {}
         stats['symptoms'] = {}
-        stats['symptoms']['עייפות'] = 100
-        stats['symptoms']['חולשה'] = 70
-        stats['symptoms']['כאב בטן'] = 50
-        stats['symptoms']['אדמומיות'] = 30
-        stats['report_num'] = 5
+        stats['report_num'] = 0
         stats['severity'] = {}
-        stats['severity']['severe'] = 10
-        stats['severity']['not_severe'] = 5
-
+        drugs_sent = request.args
+        data_base = DB()
+        symptoms_stats = data_base.fetch_all_data(
+            "SELECT drugs,symptoms,severity FROM report_details WHERE serial>6", '')
+        for element in symptoms_stats:
+            check = all(item in element[0] for item in list(drugs_sent.keys()))
+            if check:
+                print("IN IF")
+                stats['report_num'] += 1
+                for symptom in element[1]:
+                    if symptom not in stats['symptoms']:
+                        stats['symptoms'][symptom] = 0
+                    stats['symptoms'][symptom] += 1
+                for severity in element[2]:
+                    if severity not in stats['severity']:
+                        stats['severity'][severity] = 0
+                    stats['severity'][severity] += 1
         print(stats)
         return jsonify(stats)
 
