@@ -9,6 +9,7 @@ app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
 
+
 # suggestions for drug names when searching for one
 class DrugSuggestions(Resource):
     def get(self):
@@ -45,9 +46,8 @@ class InteractionCheck(Resource):
         interaction = DrugInteractions(drug_objects)
         return jsonify(interaction.interaction_results)
 
-    # get stats of interactions
 
-
+# get stats of interactions
 class InteractionStats(Resource):
     def get(self):
         stats = {}
@@ -56,6 +56,11 @@ class InteractionStats(Resource):
         stats['symptoms']['חולשה'] = 70
         stats['symptoms']['כאב בטן'] = 50
         stats['symptoms']['אדמומיות'] = 30
+        stats['report_num'] = 5
+        stats['severity'] = {}
+        stats['severity']['severe'] = 10
+        stats['severity']['not_severe'] = 5
+
         print(stats)
         return jsonify(stats)
 
@@ -69,7 +74,7 @@ class DrugSearch(Resource):
         return jsonify(drug_details.build_search_answer())
 
 
-class SideEfeecetReport(Resource):
+class SideEfecetReport(Resource):
     def post(self):
         real = False
         drug_sent = request.get_json(force=True)
@@ -90,7 +95,7 @@ class SideEfeecetReport(Resource):
         postgres_insert_query = """ INSERT INTO private_user_details (factor_name, email,phone,sector,medical_sector, real_data)\
          VALUES (%s,%s,%s,%s,%s,%s)"""
         data_base.insert_data_row(postgres_insert_query, user_data)
-        postgres_insert_query = """INSERT INTO report_details (drugs,fromDate,untilDate, symptoms,severity,appearDate, real_data) VALUES \
+        postgres_insert_query = """INSERT INTO report_details (drugs,fromDate,untilDate,severity,appearDate, symptoms, real_data) VALUES \
         (%s,%s,%s, %s,%s,%s,%s) """
         data_base.insert_data_row(postgres_insert_query, report_data)
         data_base.close_connection()
@@ -101,7 +106,7 @@ api.add_resource(InteractionStats, '/stats')
 
 api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
-api.add_resource(SideEfeecetReport, '/side-effect-report')
+api.add_resource(SideEfecetReport, '/side-effect-report')
 
 if __name__ == '__main__':
     app.run(debug=True)
