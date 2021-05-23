@@ -31,14 +31,14 @@ class DrugIdentifier:
         if found_drug_names:
             self.find_ingredients()  # updates ingredients
             self.find_other_data()
-            self.find_serial_number()  # u pdates serial_number, ingredients_serials (if is needed)
+            self.find_serial_number()  # updates serial_number, ingredients_serials (if is needed)
 
-        print('User Insert: ', self.drug_user_name)
-        print('Hebrew drug name: ', self.drug_hebrew_name)
-        print('English drug name: ', self.drug_english_name)
-        print('Drug serial number: ', self.serial_number)
-        print('Drug ingredients: ', self.ingredients)
-        print('Drug ingredients serials: ', self.ingredients_serials)
+        # print('User Insert: ', self.drug_user_name)
+        # print('Hebrew drug name: ', self.drug_hebrew_name)
+        # print('English drug name: ', self.drug_english_name)
+        # print('Drug serial number: ', self.serial_number)
+        # print('Drug ingredients: ', self.ingredients)
+        # print('Drug ingredients serials: ', self.ingredients_serials)
 
     # find Hebrew and English Names from DB
     def find_names(self):
