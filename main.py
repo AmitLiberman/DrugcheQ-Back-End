@@ -58,11 +58,28 @@ class InteractionStats(Resource):
         stats['severity']['notSever'] = 0
 
         drugs_sent = request.args
+        drug_objects = []
+
+        for drug in list(drugs_sent.keys()):
+            drug_objects.append(DrugIdentifier(drug))
+
+        drug_heb_eng_names = []
+        for obj in drug_objects:
+            drug_heb_eng_names.append(obj.drug_english_name)
+            drug_heb_eng_names.append(obj.drug_hebrew_name)
+        print(drug_heb_eng_names)
         data_base = DB()
         symptoms_stats = data_base.fetch_all_data(
             "SELECT drugs,symptoms,severity FROM report_details WHERE serial>6", '')
+        print(symptoms_stats)
         for element in symptoms_stats:
-            check = all(item in element[0] for item in list(drugs_sent.keys()))
+            set1 = set(element[0])
+            set2 = set(drug_heb_eng_names)
+            print(set1.intersection(set2))
+            if len(set1.intersection(set2)) != 0 and len(set1.intersection(set2)) == len(set2) / 2:
+                check = True
+            else:
+                check = False
             if check and len(list(drugs_sent.keys())) / len(element[0]) >= 0.6:
                 stats['report_num'] += 1
                 for symptom in element[1]:
