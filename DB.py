@@ -1,5 +1,5 @@
 import psycopg2
-from connection_config import connection_config
+# from connection_config import connection_config
 import os
 
 class DB:
