@@ -103,7 +103,6 @@ class SideEfecetReport(Resource):
 
 api.add_resource(InteractionCheck, '/check')
 api.add_resource(InteractionStats, '/stats')
-
 api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
 api.add_resource(SideEfecetReport, '/side-effect-report')
