@@ -133,6 +133,13 @@ class DrugSearch(Resource):
         print(drug_details.build_search_answer())
         return jsonify(drug_details.build_search_answer())
 
+# check interaction between drugs
+class NewDrug(Resource):
+    def post(self):
+        drug_sent = request.get_json(force=True)
+        print(drug_sent)
+
+        return "a"
 
 class SideEfecetReport(Resource):
     def post(self):
@@ -167,6 +174,8 @@ api.add_resource(DrugSuggestions, '/suggest')
 api.add_resource(DrugSearch, '/drug-search')
 api.add_resource(SideEfecetReport, '/side-effect-report')
 api.add_resource(SearchStats, '/search-stats')
+api.add_resource(NewDrug, '/new-drug')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
