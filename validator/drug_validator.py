@@ -64,13 +64,14 @@ def validate(drug_name):
     response = send_req(drug_name)
     print(response)
     if len(response['results']) == 0:
-        return
+        print("can not find drug "+drug_name+" in API")
+        return False
     english_name = response['results'][0]['dragEnName']
     hebrew_name = response['results'][0]['dragHebName']
     drug_exist = db_check(english_name, hebrew_name)
     if drug_exist:
         print("Drug already exist in DB")
-        return
+        return True
 
     remedy_number = response['results'][0]['dragRegNum'].replace(" ", "-")
     ingredients = ''
@@ -95,7 +96,15 @@ def validate(drug_name):
     print("Inserting new drug row to DB")
     print(new_drug_details)
     insert_data(new_drug_details)
+    return True
 
 
-if __name__ == '__main__':
-    validate("אדמלוג")
+def check_drug(commercialName, genericName):
+    is_valid = validate(commercialName)
+    if is_valid is False:
+        is_valid = validate(genericName)
+    return is_valid
+
+
+# if __name__ == '__main__':
+#     validate("אדמלוג")

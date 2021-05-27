@@ -4,6 +4,8 @@ from flask_restful import Api, Resource
 from DB import DB
 from InteractionCheck.DrugIdentifier import DrugIdentifier
 from InteractionCheck.DrugInteractions import DrugInteractions
+from validator.drug_validator import check_drug
+
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
@@ -138,14 +140,14 @@ class NewDrug(Resource):
     def post(self):
         drug_sent = request.get_json(force=True)
         print(drug_sent['commercialName'], drug_sent['genericName'], drug_sent['useForm'])
-        new_drug_data = (drug_sent['commercialName'], drug_sent['genericName'], drug_sent['useForm'])
-        data_base = DB()
-        postgres_insert_query = """ INSERT INTO new_drug_suggest (commercialName, genericName,useForm)\
-         VALUES (%s,%s,%s)"""
-        data_base.insert_data_row(postgres_insert_query, new_drug_data)
-        data_base.close_connection()
-
-
+        check = check_drug(drug_sent['commercialName'], drug_sent['genericName'])
+        if check is False:
+            new_drug_data = (drug_sent['commercialName'], drug_sent['genericName'], drug_sent['useForm'])
+            data_base = DB()
+            postgres_insert_query = """ INSERT INTO new_drug_suggest (commercialName, genericName,useForm)\
+             VALUES (%s,%s,%s)"""
+            data_base.insert_data_row(postgres_insert_query, new_drug_data)
+            data_base.close_connection()
 
 
 class SideEfecetReport(Resource):
