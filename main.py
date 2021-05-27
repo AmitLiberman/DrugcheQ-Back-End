@@ -133,13 +133,20 @@ class DrugSearch(Resource):
         print(drug_details.build_search_answer())
         return jsonify(drug_details.build_search_answer())
 
+
 # check interaction between drugs
 class NewDrug(Resource):
     def post(self):
-        drug_sent = request.get_json(force=True)
-        print(drug_sent)
 
-        return "a"
+        drug_sent = request.get_json(force=True)
+        print(drug_sent['commercialName'], drug_sent['genericName'], drug_sent['useForm'])
+        new_drug_data = (drug_sent['commercialName'], drug_sent['genericName'], drug_sent['useForm'])
+        data_base = DB()
+        postgres_insert_query = """ INSERT INTO new_drug_suggest (commercialName, genericName,useForm)\
+         VALUES (%s,%s,%s)"""
+        data_base.insert_data_row(postgres_insert_query, new_drug_data)
+        data_base.close_connection()
+
 
 class SideEfecetReport(Resource):
     def post(self):
@@ -175,7 +182,6 @@ api.add_resource(DrugSearch, '/drug-search')
 api.add_resource(SideEfecetReport, '/side-effect-report')
 api.add_resource(SearchStats, '/search-stats')
 api.add_resource(NewDrug, '/new-drug')
-
 
 if __name__ == '__main__':
     app.run(debug=True)

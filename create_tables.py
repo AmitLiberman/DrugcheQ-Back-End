@@ -2,33 +2,42 @@ import psycopg2
 from connection_config import connection_config
 
 
+# """
+# CREATE TABLE private_user_details (
+#     serial SERIAL PRIMARY KEY,
+#     factor_name text NOT NULL,
+#     email text ,
+#     phone text ,
+#     sector text ,
+#     medical_sector text NOT NULL,
+#     real_data BOOLEAN
+# )
+# """,
+# """
+# CREATE TABLE report_details (
+#     serial SERIAL PRIMARY KEY,
+#     drugs text[] NOT NULL,
+#     fromDate text[] NOT NULL,
+#     untilDate text[] NOT NULL,
+#     symptoms text[] NOT NULL,
+#     severity text[]  NOT NULL,
+#     appearDate text[] NOT NULL,
+#     real_data BOOLEAN
+# )
+# """,
+
+
 def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
         """
-        CREATE TABLE private_user_details (
+        CREATE TABLE new_drug_suggest (
             serial SERIAL PRIMARY KEY,
-            factor_name text NOT NULL,
-            email text ,
-            phone text ,
-            sector text ,
-            medical_sector text NOT NULL,
-            real_data BOOLEAN
+            commercialName text,
+            genericName text,
+            useForm text 
         )
         """,
-        """
-        CREATE TABLE report_details (
-            serial SERIAL PRIMARY KEY,
-            drugs text[] NOT NULL,
-            fromDate text[] NOT NULL,
-            untilDate text[] NOT NULL,
-            symptoms text[] NOT NULL,
-            severity text[]  NOT NULL,
-            appearDate text[] NOT NULL,
-            real_data BOOLEAN
-        )
-        """,
-
     )
     conn = None
     try:
