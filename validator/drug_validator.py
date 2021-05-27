@@ -1,9 +1,11 @@
 import requests
 
-if __name__ == '__main__':
+
+def send_req(drug_name):
     url = "https://esb.gov.il/GovServiceList/IDRServer/SearchByName"
 
-    payload = "{\"val\":\"ACAMOL\",\"prescription\":false,\"healthServices\":false,\"pageIndex\":1,\"orderBy\":0}".encode(
+    payload = (
+            "{\"val\":\"" + drug_name + "\",\"prescription\":false,\"healthServices\":false,\"pageIndex\":1,\"orderBy\":0}").encode(
         'utf-8')
     headers = {
         'Connection': 'keep-alive',
@@ -24,5 +26,38 @@ if __name__ == '__main__':
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
+    return response.json()
 
-    print(response.text)
+
+def validate(drug_name):
+    response = send_req(drug_name)
+    print(response)
+    relevant_cols = ['remedy_number', 'english_name', 'hebrew_name', 'ingredients', 'details', 'dosage_form',
+                     'how_taking',
+                     'prescription', 'health_basket']
+    remedy_number = response['results'][0]['dragRegNum']
+    english_name = response['results'][0]['dragEnName']
+    hebrew_name = response['results'][0]['dragHebName']
+    ingredients = ''
+    for key, value in  response['results'][0]['activeComponents'][0].items():
+        ingredients += value + ';'
+    ingredients = ingredients[:-1]
+    details = response['results'][0]['indications']
+    dosage_form = response['results'][0]['dosageForm']
+    how_taking = response['results'][0]['usageForm']
+    if response['results'][0]['prescription'] == True:
+        prescription = "כן"
+    else:
+        prescription = "לא"
+    if response['results'][0]['health'] == True:
+        health_basket = "כן"
+    else:
+        health_basket = "לא"
+
+
+
+# drug_exist()
+
+
+if __name__ == '__main__':
+    validate("Humira")
