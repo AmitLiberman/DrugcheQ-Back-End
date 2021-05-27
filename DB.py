@@ -2,6 +2,7 @@ import psycopg2
 from connection_config import connection_config
 import os
 
+
 class DB:
     def __init__(self):
         self.connection = self.connect_data_base()
@@ -27,8 +28,17 @@ class DB:
                 cur.execute(query)
             return cur.fetchall()
 
+    def fetch_row_data(self, query, value1, value2):
+        with self.connection as conn:
+            cur = conn.cursor()
+            if value1 and value2:
+                cur.execute(query, (value1, value2))
+            else:
+                cur.execute(query)
+            return cur.fetchall()
+
     def insert_data_row(self, query, data):
-         with self.connection as conn:
+        with self.connection as conn:
             cur = conn.cursor()
             try:
                 postgres_insert_query = query

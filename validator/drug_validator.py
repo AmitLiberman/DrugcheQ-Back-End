@@ -1,4 +1,5 @@
 import requests
+from DB import DB
 
 
 def send_req(drug_name):
@@ -29,17 +30,24 @@ def send_req(drug_name):
     return response.json()
 
 
+def db_check(english_name, hebrew_name):
+    data_base = DB()
+    temp_drug_list = data_base.fetch_row_data(
+        "SELECT * FROM drug_name WHERE hebrew_name=%s and english_name=%s", hebrew_name,english_name)
+    data_base.close_connection()
+    print(temp_drug_list)
+
+
 def validate(drug_name):
     response = send_req(drug_name)
     print(response)
-    relevant_cols = ['remedy_number', 'english_name', 'hebrew_name', 'ingredients', 'details', 'dosage_form',
-                     'how_taking',
-                     'prescription', 'health_basket']
-    remedy_number = response['results'][0]['dragRegNum']
+    remedy_number = "-".join(response['results'][0]['dragRegNum'])
     english_name = response['results'][0]['dragEnName']
     hebrew_name = response['results'][0]['dragHebName']
+    db_check( english_name, hebrew_name)
+
     ingredients = ''
-    for key, value in  response['results'][0]['activeComponents'][0].items():
+    for key, value in response['results'][0]['activeComponents'][0].items():
         ingredients += value + ';'
     ingredients = ingredients[:-1]
     details = response['results'][0]['indications']
@@ -55,9 +63,5 @@ def validate(drug_name):
         health_basket = "לא"
 
 
-
-# drug_exist()
-
-
 if __name__ == '__main__':
-    validate("Humira")
+    validate("יומירה")
