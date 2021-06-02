@@ -1,5 +1,5 @@
 import psycopg2
-# from connection_config import connection_config
+from connection_config import connection_config
 import os
 
 
@@ -8,7 +8,7 @@ class DB:
         self.connection = self.connect_data_base()
 
     def connect_data_base(self):
-        connection_config = os.environ['DATABASE_URL']
+        # connection_config = os.environ['DATABASE_URL']
         connection = psycopg2.connect(connection_config)
         return connection
 

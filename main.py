@@ -26,13 +26,10 @@ class DrugSuggestions(Resource):
         drug_list_dict = []
         dict = {}
         for english_name, hebrew_name in english_hebrew.items():
-            dict['name'] = english_name
-            drug_list_dict.append(dict.copy())
-            dict['name'] = hebrew_name
+            dict['name'] = english_name + ' / ' + hebrew_name
             drug_list_dict.append(dict.copy())
         data_base.close_connection()
         print(drug_list_dict)
-
         return jsonify(drug_list_dict)
 
 
