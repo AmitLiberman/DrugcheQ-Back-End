@@ -30,13 +30,10 @@ from connection_config import connection_config
 def create_tables():
     """ create tables in the PostgreSQL database"""
     commands = (
+
         """
-        CREATE TABLE new_drug_suggest (
-            serial SERIAL PRIMARY KEY,
-            commercialName text,
-            genericName text,
-            useForm text 
-        )
+        ALTER TABLE report_details
+        ADD isNew text[] ;
         """,
     )
     conn = None

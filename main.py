@@ -161,15 +161,17 @@ class SideEfecetReport(Resource):
         symptom_list = [item['name'] for item in drug_sent['symptomList']]
         severity_list = [item['severity'] for item in drug_sent['symptomList']]
         appearDate_list = [item['appearDate'] for item in drug_sent['symptomList']]
+        isNewDrug_list = [item['isNewDrug'] for item in drug_sent['drugList']]
 
-        report_data = (drug_list, fromDate_list, untilDate_list, severity_list, appearDate_list, symptom_list, real)
+
+        report_data = (drug_list, fromDate_list, untilDate_list, severity_list, appearDate_list, symptom_list, real,isNewDrug_list)
         print(report_data)
         data_base = DB()
         postgres_insert_query = """ INSERT INTO private_user_details (factor_name, email,phone,sector,medical_sector, real_data)\
          VALUES (%s,%s,%s,%s,%s,%s)"""
         data_base.insert_data_row(postgres_insert_query, user_data)
-        postgres_insert_query = """INSERT INTO report_details (drugs,fromDate,untilDate,severity,appearDate, symptoms, real_data) VALUES \
-        (%s,%s,%s, %s,%s,%s,%s) """
+        postgres_insert_query = """INSERT INTO report_details (drugs,fromDate,untilDate,severity,appearDate, symptoms, real_data,isNew) VALUES \
+        (%s,%s,%s, %s,%s,%s,%s,%s) """
         data_base.insert_data_row(postgres_insert_query, report_data)
         data_base.close_connection()
 
