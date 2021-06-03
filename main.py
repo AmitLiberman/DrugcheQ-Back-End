@@ -37,10 +37,10 @@ class DrugSuggestions(Resource):
 class InteractionCheck(Resource):
     def get(self):
         drugs_sent = request.args
+        drug_list = [drug.split(" / ")[0] for drug in list(drugs_sent.keys())]
         drug_objects = []
-        for drug in list(drugs_sent.keys()):
+        for drug in drug_list:
             drug_objects.append(DrugIdentifier(drug))
-
         interaction = DrugInteractions(drug_objects)
         return jsonify(interaction.interaction_results)
 
@@ -56,16 +56,17 @@ class InteractionStats(Resource):
         stats['severity']['notSever'] = 0
 
         drugs_sent = request.args
+        drug_list = [drug.split(" / ")[0] for drug in list(drugs_sent.keys())]
+
         drug_objects = []
 
-        for drug in list(drugs_sent.keys()):
+        for drug in drug_list:
             drug_objects.append(DrugIdentifier(drug))
 
         drug_heb_eng_names = []
         for obj in drug_objects:
             drug_heb_eng_names.append(obj.drug_english_name)
             drug_heb_eng_names.append(obj.drug_hebrew_name)
-        print(drug_heb_eng_names)
         data_base = DB()
         symptoms_stats = data_base.fetch_all_data(
             "SELECT drugs,symptoms,severity FROM report_details WHERE serial>6", '')
@@ -73,7 +74,6 @@ class InteractionStats(Resource):
         for element in symptoms_stats:
             set1 = set(element[0])
             set2 = set(drug_heb_eng_names)
-            print(set1.intersection(set2))
             if len(set1.intersection(set2)) != 0 and len(set1.intersection(set2)) == len(set2) / 2:
                 check = True
             else:
@@ -163,8 +163,8 @@ class SideEfecetReport(Resource):
         appearDate_list = [item['appearDate'] for item in drug_sent['symptomList']]
         isNewDrug_list = [item['isNewDrug'] for item in drug_sent['drugList']]
 
-
-        report_data = (drug_list, fromDate_list, untilDate_list, severity_list, appearDate_list, symptom_list, real,isNewDrug_list)
+        report_data = (
+        drug_list, fromDate_list, untilDate_list, severity_list, appearDate_list, symptom_list, real, isNewDrug_list)
         print(report_data)
         data_base = DB()
         postgres_insert_query = """ INSERT INTO private_user_details (factor_name, email,phone,sector,medical_sector, real_data)\
