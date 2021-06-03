@@ -156,10 +156,9 @@ class SideEfecetReport(Resource):
         real = False
         drug_sent = request.get_json(force=True)
         print(drug_sent)
-
         user_data = (drug_sent['factorName'], drug_sent['email'], drug_sent['phoneNumber'], drug_sent['sector'],
                      drug_sent['medicalSector'], real)
-        drug_list = [item['name'] for item in drug_sent['drugList']]
+        drug_list = [item['name'].split(" / ")[0] for item in drug_sent['drugList']]
         untilDate_list = [item['untilDate'] for item in drug_sent['drugList']]
         fromDate_list = [item['fromDate'] for item in drug_sent['drugList']]
         symptom_list = [item['name'] for item in drug_sent['symptomList']]
