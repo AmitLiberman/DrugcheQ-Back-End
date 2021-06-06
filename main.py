@@ -104,15 +104,13 @@ class SearchStats(Resource):
         stats['severity']['notSever'] = 0
 
         drug_sent = request.args
-        drug_sent =list(drug_sent.keys())[1]
-        drug_sent = drug_sent.split(" / ")[0]
-
+        drug_sent =list(drug_sent.keys())
         data_base = DB()
 
         symptoms_stats = data_base.fetch_all_data(
             "SELECT drugs,symptoms,severity FROM report_details WHERE serial>6", '')
         for element in symptoms_stats:
-            if list(drug_sent.keys())[0] in element[0] or drug_sent in element[0]:
+            if drug_sent[0] in element[0] or drug_sent[1] in element[0]:
                 stats['report_num'] += 1
                 for symptom in element[1]:
                     if symptom not in stats['symptoms']:
