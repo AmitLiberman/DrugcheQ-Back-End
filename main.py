@@ -153,7 +153,7 @@ class NewDrug(Resource):
 
 class SideEfecetReport(Resource):
     def post(self):
-        real = False
+        real = True
         drug_sent = request.get_json(force=True)
         print(drug_sent)
         user_data = (drug_sent['factorName'], drug_sent['email'], drug_sent['phoneNumber'], drug_sent['sector'],
