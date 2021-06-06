@@ -33,7 +33,7 @@ class DrugSuggestions(Resource):
         return jsonify(drug_list_dict)
 
 
-# check interaction between drugs 1
+# check interaction between drugs
 class InteractionCheck(Resource):
     def get(self):
         drugs_sent = request.args
